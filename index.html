@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.7.1/firebase-ui-auth.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css'>
+    <link rel="stylesheet" href="./dist/css/main.css">
+    <title>GoodThings</title>
+</head>
+<body>
+    <div id="app">
+        <div class="sticky-top">
+            <div class="header-main">
+                <h1>GoodThings</h1>
+                <button type="button" @click="isEdit = !isEdit">新增</button>
+                <button type="button" @click="logout">登出</button>
+            </div>
+            <div class="box-form" v-if="isEdit">
+                <form class="form form-cost" @submit.prevent="addCost">
+                    <div>
+                        <input v-model="formCost.date">
+                        <input v-model="formCost.name" placeholder="品項" required>
+                        <input v-model.number="formCost.price" placeholder="價格" type="number" required>
+                        <button type="submit">新增花費</button>
+                    </div>
+                    <ul class="list-tags">
+                        <li v-for="tag in tags" :key="tag" :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag)">
+                            {{ tag }}
+                        </li>
+                        <li @click="isAddTag = !isAddTag">+</li>
+                    </ul>
+                    
+                </form>
+                <form v-if="isAddTag" class="form form-tag" @submit.prevent="addTag">
+                    <input v-model="newTagName" placeholder="標籤名">
+                    <button type="submit">新增標籤</button>
+                </form>
+            </div>
+        </div>
+
+        <main class="main-main">
+            <form id="firebaseui-auth-container"></form>
+            {{ dateActive }}
+            <div class="box-date">
+                <label @click="changeDate('prevMonth')">上個月</label>
+                <h3>{{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月</h3>
+                <label @click="changeDate('nextMonth')">下個月</label>
+            </div>
+            <h2 class="total-month">${{ costsMonth.total }}</h2>
+            <ul class="list-tags-total">
+                <li v-for="tag in costsMonth.tagsTotal">
+                    <h4>{{ tag.name }}</h4>
+                    <h5>${{ tag.total }}</h5>
+                </li>
+            </ul>
+            <ul class="list-costs">
+                <li v-for="cost in costsMonth.costs" :key="cost.date">
+                    <label>{{ cost.date }}<span>${{ cost.total }}</span></label>
+                    <ul>
+                        <li v-for="item in cost.list" :key="cost.date + item.name">
+                            <h4>{{ item.name }}</h4>
+                            <h5>${{ item.price }}</h5>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </main>
+        
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.7.1/firebase-ui-auth__zh_tw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+    <script type="module" src="dist/js/main.js"></script>
+</body>
+</html>

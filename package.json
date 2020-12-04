@@ -1,0 +1,19 @@
+{
+    "name": "goodthings",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "author": "Chia Yi Lai",
+    "license": "ISC",
+    "dependencies": {
+        "http-server": "^0.12.3",
+        "node-sass": "^5.0.0",
+        "onchange": "^7.1.0"
+    },
+    "scripts": {
+        "server": "http-server ./",
+        "sass": "node-sass --output-style compressed ./src/css/main.sass -o ./dist/css/",
+        "sass-w": "onchange \"./src/css/**/*.sass\" -- npm run sass",
+        "w": "concurrently \"npm run sass\" \"npm run sass-w\" "
+    }
+}
