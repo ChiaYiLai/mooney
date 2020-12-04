@@ -13,16 +13,16 @@
         <div class="sticky-top">
             <div class="header-main">
                 <h1>GoodThings</h1>
-                <button type="button" @click="isEdit = !isEdit">新增</button>
+                <button type="button" @click="editCost('add')">新增</button>
                 <button type="button" @click="logout">登出</button>
             </div>
             <div class="box-form" v-if="isEdit">
-                <form class="form form-cost" @submit.prevent="addCost">
+                <form class="form form-cost" @submit.prevent="updateCost(editCostType)">
                     <div>
                         <input v-model="formCost.date">
                         <input v-model="formCost.name" placeholder="品項" required>
                         <input v-model.number="formCost.price" placeholder="價格" type="number" required>
-                        <button type="submit">新增花費</button>
+                        <button type="submit">{{ costSubmitText }}</button>
                     </div>
                     <ul class="list-tags">
                         <li v-for="tag in tags" :key="tag" :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag)">
@@ -58,13 +58,14 @@
                 <li v-for="cost in costsMonth.costs" :key="cost.date">
                     <label>{{ cost.date }}<span>${{ cost.total }}</span></label>
                     <ul>
-                        <li v-for="item in cost.list" :key="cost.date + item.name">
-                            <h4>{{ item.name }}</h4>
+                        <li v-for="item in cost.list" :key="item.id" @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)" :class="{ 'active' : costActiveId === item.id }">
+                            <h4>({{ item. id }}) {{ item.name }}</h4>
                             <h5>${{ item.price }}</h5>
                         </li>
                     </ul>
                 </li>
             </ul>
+            <button v-if="costActiveId !== null" @click="updateCost('delete')">刪除</button>
         </main>
         
     </div>

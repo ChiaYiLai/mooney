@@ -13,6 +13,8 @@ const app = new Vue({
         email: '',
         displayName: 'guest',
         costs: [],
+        editCostType: 'add',
+        costActiveId: null,
         tags: ['食物', '家用', '交通'],
         tagsActive: [],
         formCost: {
@@ -26,6 +28,12 @@ const app = new Vue({
         dateActive: getToday(),
     },
     computed: {
+        costSubmitText: function() {
+            const { editCostType } = this;
+            let text = '新增';
+            if (editCostType === 'put') text = '修改';
+            return text;
+        },
         costsMonth: function() {
             const { costs, dateActive } = this;
             const sameDateCosts = costs.filter(cost => cost.date.substring(0, 7) === dateActive.substring(0, 7));
@@ -44,15 +52,15 @@ const app = new Vue({
             });
             let dateCosts = [];
             sameDateCosts.map(cost => {
-                const { date, name, price, tags } = cost;
+                const { id, date, name, price, tags } = cost;
                 const index = dateCosts.findIndex(item => item.date === date);
                 if (index === -1) {
                     dateCosts.push({
                         date,
-                        list: [{ name, price, tags, }],
+                        list: [{ id, name, price, tags, }],
                     });
                 } else {
-                    dateCosts[index].list.push({ name, price, tags, });
+                    dateCosts[index].list.push({ id, name, price, tags, });
                 }
             });
             dateCosts.map(item => {
@@ -89,23 +97,35 @@ const app = new Vue({
                 if (doc.exists) {
                     const { tags, costs } = doc.data();
                     self.tags = tags;
+                    self.costsOrigin = JSON.parse(JSON.stringify(costs));
+                    costs.map((cost, index) => cost.id = index);
                     self.costs = costs;
                 } else {
                     db.collection('users').doc(uid).set({ tags: [], costs: [] });
                 }
             });
         },
-        addCost: function() {
-            const { uid, formCost, tagsActive, costs } = this;
+        editCost: function(type, id=0, date="", name="", price=0, tags=[]) {
+            this.isEdit = true;
+            this.editCostType = type;
+            if (type === 'put') {
+                this.costActiveId = id;
+                this.formCost = { date, name, price };
+                this.tagsActive = tags;
+            }
+        },
+        updateCost: function(type) {
+            const { uid, formCost, tagsActive, costsOrigin } = this;
             const newCost = Object.assign(formCost, { tags: tagsActive });
-            costs.push(newCost);
-            db.collection('users').doc(uid).update({ costs })
+            if (type === 'put' || type === 'delete') costsOrigin.splice(this.costActiveId, 1);
+            if (type === 'put' || type === 'add') costsOrigin.push(newCost);
+            db.collection('users').doc(uid).update({ costs: costsOrigin })
             .then(() => {
-                notice('新增成功', 'success');
+                notice('更新成功', 'success');
+                this.getData();
             })
             .catch(error => {
-                notice(`新增失敗：${error}`);
-                costs.splice(-1, 1);
+                notice(`更新失敗：${error}`);
             });
         },
         addTag: function() {
