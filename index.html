@@ -25,12 +25,11 @@
                         <button type="submit">{{ costSubmitText }}</button>
                     </div>
                     <ul class="list-tags">
-                        <li v-for="tag in tags" :key="tag" :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag)">
+                        <li v-for="tag in tags" :key="tag" :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag, tagsActive)">
                             {{ tag }}
                         </li>
                         <li @click="isAddTag = !isAddTag">+</li>
                     </ul>
-                    
                 </form>
                 <form v-if="isAddTag" class="form form-tag" @submit.prevent="addTag">
                     <input v-model="newTagName" placeholder="標籤名">
@@ -41,25 +40,24 @@
 
         <main class="main-main">
             <form id="firebaseui-auth-container"></form>
-            {{ dateActive }}
             <div class="box-date">
                 <label @click="changeDate('prevMonth')">上個月</label>
                 <h3>{{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月</h3>
                 <label @click="changeDate('nextMonth')">下個月</label>
             </div>
-            <h2 class="total-month">${{ costsMonth.total }}</h2>
+            <h2 class="total-month">${{ totalMonth }}</h2>
             <ul class="list-tags-total">
-                <li v-for="tag in costsMonth.tagsTotal">
+                <li v-for="tag in tagsTotal" :key="tag.name" @click="toggleTag(tag.name, tagsFilter)" :class="{ 'active' : tagsFilter.includes(tag.name)}">
                     <h4>{{ tag.name }}</h4>
                     <h5>${{ tag.total }}</h5>
                 </li>
             </ul>
             <ul class="list-costs">
-                <li v-for="cost in costsMonth.costs" :key="cost.date">
+                <li v-for="cost in costsList" :key="cost.date">
                     <label>{{ cost.date }}<span>${{ cost.total }}</span></label>
                     <ul>
                         <li v-for="item in cost.list" :key="item.id" @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)" :class="{ 'active' : costActiveId === item.id }">
-                            <h4>({{ item. id }}) {{ item.name }}</h4>
+                            <h4>{{ item.name }}</h4>
                             <h5>${{ item.price }}</h5>
                         </li>
                     </ul>

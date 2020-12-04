@@ -17,6 +17,7 @@ const app = new Vue({
         costActiveId: null,
         tags: ['食物', '家用', '交通'],
         tagsActive: [],
+        tagsFilter: [],
         formCost: {
             date: getToday(),
             name: '',
@@ -36,44 +37,52 @@ const app = new Vue({
         },
         costsMonth: function() {
             const { costs, dateActive } = this;
-            const sameDateCosts = costs.filter(cost => cost.date.substring(0, 7) === dateActive.substring(0, 7));
-            const monthTotal = sameDateCosts.reduce((a, b) => a + parseInt(b.price, 10), 0);
+            return costs.filter(cost => cost.date.substring(0, 7) === dateActive.substring(0, 7));
+        },
+        totalMonth: function() {
+            const { costsMonth } = this;
+            return costsMonth.reduce((a, b) => a + parseInt(b.price, 10), 0);
+        },
+        tagsTotal: function() {
+            const { costsMonth } = this;
             let allTags = [];
-            sameDateCosts.map(cost => cost.tags.map(tag => allTags.push(tag)));
+            costsMonth.map(cost => cost.tags.map(tag => allTags.push(tag)));
             allTags = Array.from(new Set(allTags));
             let tagsTotal = [];
             allTags.map(tag => {
-                const sameTagCosts = sameDateCosts.filter(cost => cost.tags.includes(tag));
+                const sameTagCosts = costsMonth.filter(cost => cost.tags.includes(tag));
                 const total = sameTagCosts.reduce((a ,b) => a + parseInt(b.price), 0);
                 tagsTotal.push({
                     name: tag,
                     total, 
                 });
             });
-            let dateCosts = [];
-            sameDateCosts.map(cost => {
+            return tagsTotal;
+        },
+        costsList: function() {
+            const { costsMonth, tagsFilter } = this;
+            let newCostsMonth = JSON.parse(JSON.stringify(costsMonth));
+            if (tagsFilter.length) {
+                newCostsMonth = newCostsMonth.filter(cost => cost.tags.some(tag => tagsFilter.includes(tag)));
+            }
+            let target = [];
+            newCostsMonth.map(cost => {
                 const { id, date, name, price, tags } = cost;
-                const index = dateCosts.findIndex(item => item.date === date);
+                const index = target.findIndex(item => item.date === date);
                 if (index === -1) {
-                    dateCosts.push({
+                    target.push({
                         date,
                         list: [{ id, name, price, tags, }],
                     });
                 } else {
-                    dateCosts[index].list.push({ id, name, price, tags, });
+                    target[index].list.push({ id, name, price, tags, });
                 }
             });
-            dateCosts.map(item => {
+            target.map(item => {
                 const dayTotal = item.list.reduce((a, b) => a + parseInt(b.price), 0);
                 item.total = dayTotal;
             });
-            const newCosts = {
-                total: monthTotal,
-                count: sameDateCosts.length,
-                costs: dateCosts,
-                tagsTotal,
-            }
-            return newCosts;
+            return target;
         },
     },
     mounted: function() {
@@ -144,9 +153,9 @@ const app = new Vue({
                 tagsOrigin.splice(-1, 1);
             });
         },
-        toggleTag: function(tag) {
-            const index = this.tagsActive.findIndex(item => item === tag);
-            index === -1 ? this.tagsActive.push(tag) : this.tagsActive.splice(index, 1);
+        toggleTag: function(tag, target) {
+            const index = target.findIndex(item => item === tag);
+            index === -1 ? target.push(tag) : target.splice(index, 1);
         },
         changeDate: function(type) {
             const { dateActive } = this;

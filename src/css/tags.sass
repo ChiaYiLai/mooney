@@ -1,6 +1,6 @@
 .list-tags
 	list-style: none
-	margin: 0
+	margin: .5rem 0 0
 	padding: 0
 	display: flex
 	li
@@ -8,6 +8,10 @@
 		margin: 0 .5rem .5rem 0
 		padding: 4px 12px
 		font-size: 12px
+		cursor: pointer
+		transition: .2s
+		&:hover
+			background-color: rgba(0, 0, 0, .1)
 		&.active
 			background-color: $tag
 			color: #fff
@@ -24,6 +28,10 @@
 		padding: 8px
 		margin: 0 .5rem .5rem 0
 		text-align: center
+		cursor: pointer
+		&.active
+			background-color: #f90
+			color: #fff
 		h4, h5
 			margin: 0
 			font-size: 12px
