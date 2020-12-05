@@ -12,17 +12,19 @@
 				margin-left: 1rem
 		ul
 			display: flex
+			flex-wrap: wrap
 			list-style: none
 			margin: 0
 			padding: 0
 			li
 				border: 1px solid $border
+				border-radius: 2px
 				padding: 8px 12px
 				margin: 0 .5rem .5rem 0
 				display: flex
 				align-items: center
 				&.active
-					background-color: #f90
+					background-color: $warning
 					color: #fff
 				h4
 					font-size: 12px
@@ -30,9 +32,16 @@
 				h5
 					font-size: 12px
 					margin: 0
-				
 
-.total-month
-	text-align: center
-	font-size: 21px
-	color: $main
+.delete-cost
+	position: fixed
+	right: 1rem
+	bottom: 1rem
+	width: 48px
+	height: 48px
+	background-color: $danger
+	color: #fff
+	border-radius: 50%
+	display: flex
+	justify-content: center
+	align-items: center

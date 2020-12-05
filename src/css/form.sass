@@ -2,12 +2,23 @@
 	padding: 1rem
 
 input
-	padding: 4px 12px
+	padding: 8px 12px
 	border: 1px solid $border
+	border-radius: 2px
 	display: block
-	font-family: sans-serif
+	font-family: 'Varela Round', sans-serif
 	&:focus
 		outline: 0
+
+.box-form
+	visibility: hidden
+	opacity: 0
+	transition: .4s
+	max-height: 0
+	&.active
+		visibility: visible
+		opacity: 1
+		max-height: 200px
 .form-cost
 	padding-bottom: .5rem
 	> div
@@ -30,3 +41,5 @@ button
 	border: 0
 	&:focus
 		outline: 0
+	&.warning
+		background-color: $warning

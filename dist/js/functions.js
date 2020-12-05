@@ -7,6 +7,6 @@ export function getToday() {
     return `${yyyy}-${MM}-${dd}`;
 }
 
-export function notice(text, type='error', timeout=5000) {
-    new Noty({ text, type, timeout }).show();
+export function notice(text, type='error', timeout=3000) {
+    new Noty({ text, type, timeout, layout: 'buttonCenter' }).show();
 }

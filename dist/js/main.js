@@ -24,7 +24,7 @@ const app = new Vue({
             price: null,
         },
         newTagName: '',
-        isEdit: false,
+        isEditCost: false,
         isAddTag: false,
         dateActive: getToday(),
     },
@@ -114,8 +114,13 @@ const app = new Vue({
                 }
             });
         },
+        handleEdit: function() {
+            this.isEditCost = !this.isEditCost;
+            this.costActiveId = null;
+            this.editCostType = 'add';
+        },
         editCost: function(type, id=0, date="", name="", price=0, tags=[]) {
-            this.isEdit = true;
+            this.isEditCost = true;
             this.editCostType = type;
             if (type === 'put') {
                 this.costActiveId = id;
@@ -132,6 +137,8 @@ const app = new Vue({
             .then(() => {
                 notice('更新成功', 'success');
                 this.getData();
+                this.costActiveId = null;
+                this.isEditCost = false;
             })
             .catch(error => {
                 notice(`更新失敗：${error}`);
@@ -187,6 +194,9 @@ const app = new Vue({
                 notice('發出錯誤');
             });
         },
+        nc: function(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     },
 });
 

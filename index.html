@@ -14,22 +14,24 @@
         <div class="sticky-top">
             <div class="header-main">
                 <h1>GoodThings</h1>
-                <i @click="editCost('add')" class="material-icons">add</i>
+                <i @click="handleEdit" class="material-icons" :class="{ 'active' : isEditCost }">add</i>
                 <button type="button" @click="logout" style="display: none;">登出</button>
             </div>
-            <div class="box-form" v-if="isEdit">
+            <div class="box-form" :class="{ 'active' : isEditCost }">
                 <form class="form form-cost" @submit.prevent="updateCost(editCostType)">
                     <div>
                         <input v-model="formCost.date">
                         <input v-model="formCost.name" placeholder="品項" required>
                         <input v-model.number="formCost.price" placeholder="價格" type="number" required>
-                        <button type="submit">{{ costSubmitText }}</button>
+                        <button type="submit" :class="{ 'warning' : editCostType === 'put'}">{{ costSubmitText }}</button>
                     </div>
                     <ul class="list-tags">
                         <li v-for="tag in tags" :key="tag" :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag, tagsActive)">
                             {{ tag }}
                         </li>
-                        <li @click="isAddTag = !isAddTag">+</li>
+                        <li @click="isAddTag = !isAddTag">
+                            <i class="material-icons">add_circle</i>
+                        </li>
                     </ul>
                 </form>
                 <form v-if="isAddTag" class="form form-tag" @submit.prevent="addTag">
@@ -46,25 +48,25 @@
                 <h3>{{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月</h3>
                 <span @click="changeDate('nextMonth')" class="material-icons">chevron_right</span>
             </div>
-            <h2 class="total-month">${{ totalMonth }}</h2>
+            <h2 class="total-month">${{ nc(totalMonth) }}</h2>
             <ul class="list-tags-total">
                 <li v-for="tag in tagsTotal" :key="tag.name" @click="toggleTag(tag.name, tagsFilter)" :class="{ 'active' : tagsFilter.includes(tag.name)}">
                     <h4>{{ tag.name }}</h4>
-                    <h5>${{ tag.total }}</h5>
+                    <h5>${{ nc(tag.total) }}</h5>
                 </li>
             </ul>
             <ul class="list-costs">
                 <li v-for="cost in costsList" :key="cost.date">
-                    <label>{{ cost.date }}<span>${{ cost.total }}</span></label>
+                    <label>{{ cost.date.substring(5) }}<span>${{ nc(cost.total) }}</span></label>
                     <ul>
                         <li v-for="item in cost.list" :key="item.id" @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)" :class="{ 'active' : costActiveId === item.id }">
                             <h4>{{ item.name }}</h4>
-                            <h5>${{ item.price }}</h5>
+                            <h5>${{ nc(item.price) }}</h5>
                         </li>
                     </ul>
                 </li>
             </ul>
-            <button v-if="costActiveId !== null" @click="updateCost('delete')">刪除</button>
+            <i class="material-icons delete-cost" v-if="costActiveId !== null" @click="updateCost('delete')">delete</i>
         </main>
         
     </div>
