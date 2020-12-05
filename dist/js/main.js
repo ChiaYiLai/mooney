@@ -25,7 +25,7 @@ const app = new Vue({
         },
         newTagName: '',
         isEditCost: false,
-        isAddTag: false,
+        isEditTag: false,
         isSettings: false,
         dateActive: dateString(),
     },
@@ -115,7 +115,7 @@ const app = new Vue({
             db.collection('users').doc(uid).get().then(doc => {
                 if (doc.exists) {
                     const { tags, costs } = doc.data();
-                    self.tags = tags;
+                    if (tags.length) self.tags = tags;
                     self.costsOrigin = JSON.parse(JSON.stringify(costs));
                     costs.map((cost, index) => cost.id = index);
                     self.costs = costs;
@@ -154,20 +154,25 @@ const app = new Vue({
                 notice(`更新失敗：${error}`);
             });
         },
-        addTag: function() {
+        updateTag: function(type, tag='') {
             const { uid, tags, newTagName } = this;
-            if (tags.includes(newTagName)) return notice('標籤已經存在');
             const self = this;
-            tags.push(newTagName);
+            if (type === 'add') {
+                if (tags.includes(newTagName)) return notice('標籤已經存在');
+                tags.push(newTagName);
+            }
+            if (type === 'delete') {
+                const index = tags.findIndex(item => item === tag);
+                tags.splice(index, 1)
+            }
             db.collection('users').doc(uid).update({ tags })
             .then(() => {
-                notice('新增標籤成功', 'success')
+                notice('更新標籤成功', 'success')
                 self.getData();
                 self.tagsActive = [];
             })
             .catch(error => {
-                notice(`新增標籤失敗：${error}`);
-                tagsOrigin.splice(-1, 1);
+                notice(`更新標籤失敗：${error}`);
             });
         },
         toggleTag: function(tag, target) {
@@ -200,6 +205,7 @@ const app = new Vue({
             firebase.auth().signOut().then(function() {
                 notice('登出成功', 'success');
                 self.uid = '';
+                self.isSettings = false;
             }).catch(function(error) {
                 notice(`error: ${error}`, 'error', false);
             });

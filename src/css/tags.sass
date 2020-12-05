@@ -29,6 +29,11 @@
 		i
 			transition: .2s
 			cursor: pointer
+			font-size: 18px
+			margin-left: .5rem
+			&.mi-lg
+				font-size: 24px
+				margin-left: 0
 			&:hover
 				color: $tag-dark
 			&.active					
@@ -36,8 +41,8 @@
 
 .list-tags-total
 	list-style: none
-	margin: 0
-	padding: 0 1rem
+	margin: 0 0 1.5rem
+	padding: 0
 	display: flex
 	flex-wrap: wrap
 	align-items: center
@@ -53,9 +58,9 @@
 		&:hover
 			border-color: $border-dark
 		&.active
-			background-color: #f90
+			border-color: $tag
 			h4, h5
-				color: #fff
+				color: $tag
 		h4
 			color: $tag
 			font-size: 13px

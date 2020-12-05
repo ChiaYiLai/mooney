@@ -4,31 +4,31 @@ html(lang="zh-tw")
     body
         #app
             include ./includes/header.pug
-            main.main-main
-                form#firebaseui-auth-container
+            include ./includes/landing.pug
+            main.main-main                
                 template(v-if="uid")
-                .box-date
-                    i.material-icons(@click="changeDateActive(-1)") chevron_left
-                    h3 {{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月
-                    i.material-icons(@click="changeDateActive(1)") chevron_right
-                h2.total-month(v-if="costsMonth.length") ${{ nc(totalMonth) }}
-                .init-tip(v-else)
-                    p 新增本月的第一筆花費吧！
-                    button.btn-lg(@click="handleEdit", type="button") 新增花費
-                ul.list-tags-total
-                    li(v-for="tag in tagsTotal", :key="tag.name", @click="toggleTag(tag.name, tagsFilter)", :class="{ 'active' : tagsFilter.includes(tag.name)}")
-                        h4 {{ tag.name }}
-                        h5 ${{ nc(tag.total) }}
-                ul.list-costs
-                    li(v-for="cost in costsList" :key="cost.date")
-                        label {{ cost.date.substring(5) }}
-                            span ${{ nc(cost.total) }}
-                        ul
-                            li(v-for="item in cost.list", :key="item.id", @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)", :class="{ 'active' : costActiveId === item.id }")
-                                h4 {{ item.name }}
-                                h5 ${{ nc(item.price) }}
-                i.material-icons.delete-cost(v-if="costActiveId !== null", @click="updateCost('delete')") delete
-                .total-year {{ dateActive.substring(0 ,4) }} 年總花費：${{ nc(totalYear) }} 元
+                    .box-date
+                        i.material-icons(@click="changeDateActive(-1)") chevron_left
+                        h3 {{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月
+                        i.material-icons(@click="changeDateActive(1)") chevron_right
+                    h2.total-month(v-if="costsMonth.length") ${{ nc(totalMonth) }}
+                    .init-tip(v-else)
+                        p 新增本月的第一筆花費吧！
+                        button.btn-lg(@click="handleEdit", type="button") 新增花費
+                    ul.list-tags-total
+                        li(v-for="tag in tagsTotal", :key="tag.name", @click="toggleTag(tag.name, tagsFilter)", :class="{ 'active' : tagsFilter.includes(tag.name)}")
+                            h4 {{ tag.name }}
+                            h5 ${{ nc(tag.total) }}
+                    ul.list-costs
+                        li(v-for="cost in costsList" :key="cost.date")
+                            label {{ cost.date.substring(5) }}
+                                span ${{ nc(cost.total) }}
+                            ul
+                                li(v-for="item in cost.list", :key="item.id", @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)", :class="{ 'active' : costActiveId === item.id }")
+                                    h4 {{ item.name }}
+                                    h5 ${{ nc(item.price) }}
+                    i.material-icons.delete-cost(v-if="costActiveId !== null", @click="updateCost('delete')") delete
+                    .total-year {{ dateActive.substring(0 ,4) }} 年總花費：${{ nc(totalYear) }} 元
             include ./includes/footer.pug
             include ./includes/settings.pug
             include ./includes/js.pug

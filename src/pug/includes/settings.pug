@@ -1,19 +1,18 @@
-template(v-if="uid")
-    .modal(v-if="isSettings", @click="isSettings = false")
-        div(@click.stop)
-            h3
-                i.material-icons portrait
-                span {{ email }}
-            ul
-                li
-                    a(href="./privacy.html", target="_blank")
-                        i.material-icons verified_user
-                        span 隱私權政策
-                li
-                    a(href="./terms.html", target="_blank")
-                        i.material-icons list_alt
-                        span 服務條款
-                li
-                    a(@click="logout")
-                        i.material-icons power_settings_new
-                        span 登出
+.modal(v-if="isSettings", @click="isSettings = false")
+    div(@click.stop)
+        h3(v-if="uid", :title="email")
+            i.material-icons portrait
+            span {{ email.substring(0, email.indexOf('@')) }}
+        ul
+            li
+                a(href="./privacy.html", target="_blank")
+                    i.material-icons verified_user
+                    span 隱私權政策
+            li
+                a(href="./terms.html", target="_blank")
+                    i.material-icons list_alt
+                    span 服務條款
+            li(v-if="uid")
+                a(@click="logout")
+                    i.material-icons power_settings_new
+                    span 登出

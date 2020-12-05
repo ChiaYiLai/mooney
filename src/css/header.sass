@@ -1,15 +1,15 @@
 .header-main
 	background-color: $main
 	color: #fff
-	display: flex
-	justify-content: center
-	align-items: center
 	padding: 0 .5rem
 	h1
 		margin: 0
-		font-size: 20px
+		font-size: 28px
+		font-weight: normal
 		height: 48px
 		line-height: 48px
+		text-align: center
+		letter-spacing: -2px
 		a
 			color: #fff
 			text-decoration: none
@@ -24,10 +24,12 @@
 		justify-content: center
 		align-items: center
 		font-size: 28px
+		position: absolute
+		top: 0
 		&:first-child
-			margin-right: auto
+			left: 0
 		&:last-child
-			margin-left: auto
+			right: 0
 		&.active
 			transform: rotate(-45deg)
 

@@ -1,8 +1,8 @@
 .sticky-top
     header.header-main
-        i.material-icons(v-if="uid", @click="isSettings = !isSettings") notes
+        i.material-icons(@click="isSettings = !isSettings") notes
         h1
-            a(href="/") GoodThings
+            a(href="/") mooney
         i.material-icons(v-if="uid", @click="handleEdit", :class="{ 'active' : isEditCost }") add
     template(v-if="uid")
     .box-form(:class="{ 'active' : isEditCost }")
@@ -17,8 +17,9 @@
                 button(type="submit", :class="{ 'warning' : editCostType === 'put'}") {{ costSubmitText }}
             ul.list-tags
                 li(v-for="tag in tags", :key="tag", :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag, tagsActive)") {{ tag }}
-                li(@click="isAddTag = !isAddTag")
-                    i.material-icons(:class="{ 'active' : isAddTag }") add_circle
-        form.form.form-tag(v-if="isAddTag", @submit.prevent="addTag")
+                    i.material-icons(v-if="isEditTag" @click="updateTag('delete', tag)") clear
+                li(@click="isEditTag = !isEditTag")
+                    i.material-icons.mi-lg(:class="{ 'active' : isEditTag }") add_circle
+        form.form.form-tag(v-if="isEditTag", @submit.prevent="updateTag('add')")
             input(v-model="newTagName", placeholder="標籤名")
             button(type="submit") 新增標籤
