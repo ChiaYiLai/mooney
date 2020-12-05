@@ -22,12 +22,17 @@
 			white-space: nowrap
 			background-color: #fff		
 			&:hover
-				background-color: rgba(0, 0, 0, .1)
+				background-color: rgba(0, 0, 0, .01)
 			&.active
 				background-color: $tag
 				color: #fff
-			i
-				font-size: 16px
+		i
+			transition: .2s
+			cursor: pointer
+			&:hover
+				color: $tag-dark
+			&.active					
+				transform: rotate(-45deg)
 
 .list-tags-total
 	list-style: none
@@ -44,6 +49,9 @@
 		margin: 0 .5rem .5rem 0
 		text-align: center
 		cursor: pointer
+		transition: .2s
+		&:hover
+			border-color: $border-dark
 		&.active
 			background-color: #f90
 			h4, h5

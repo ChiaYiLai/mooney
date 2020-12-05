@@ -20,7 +20,11 @@
             <div class="box-form" :class="{ 'active' : isEditCost }">
                 <form class="form form-cost" @submit.prevent="updateCost(editCostType)">
                     <div>
-                        <input v-model="formCost.date">
+                        <div class="input-date">
+                            <i @click="changeInputDate(-1)" class="material-icons prev-day">chevron_left</i>
+                            <input v-model="formCost.date">
+                            <i @click="changeInputDate(1)" class="material-icons next-day">chevron_right</i>
+                        </div>
                         <input v-model="formCost.name" placeholder="品項" required>
                         <input v-model.number="formCost.price" placeholder="價格" type="number" required>
                         <button type="submit" :class="{ 'warning' : editCostType === 'put'}">{{ costSubmitText }}</button>
@@ -30,7 +34,7 @@
                             {{ tag }}
                         </li>
                         <li @click="isAddTag = !isAddTag">
-                            <i class="material-icons">add_circle</i>
+                            <i :class="{ 'active' : isAddTag }" class="material-icons">add_circle</i>
                         </li>
                     </ul>
                 </form>
@@ -44,9 +48,9 @@
         <main class="main-main">
             <form id="firebaseui-auth-container"></form>
             <div class="box-date">
-                <span @click="changeDate('prevMonth')" class="material-icons">chevron_left</span>
+                <i @click="changeDate('prevMonth')" class="material-icons">chevron_left</i>
                 <h3>{{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月</h3>
-                <span @click="changeDate('nextMonth')" class="material-icons">chevron_right</span>
+                <i @click="changeDate('nextMonth')" class="material-icons">chevron_right</i>
             </div>
             <h2 class="total-month">${{ nc(totalMonth) }}</h2>
             <ul class="list-tags-total">

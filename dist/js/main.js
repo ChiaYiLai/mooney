@@ -1,5 +1,5 @@
 import { firebaseConfig, uiConfig } from './config.js';
-import { getToday, notice } from './functions.js';
+import { dateString, notice } from './functions.js';
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
@@ -19,14 +19,14 @@ const app = new Vue({
         tagsActive: [],
         tagsFilter: [],
         formCost: {
-            date: getToday(),
+            date: dateString(),
             name: '',
             price: null,
         },
         newTagName: '',
         isEditCost: false,
         isAddTag: false,
-        dateActive: getToday(),
+        dateActive: dateString(),
     },
     computed: {
         costSubmitText: function() {
@@ -186,6 +186,11 @@ const app = new Vue({
             }
             MM = `0${MM}`.slice(-2);
             this.dateActive = `${yyyy}-${MM}-${dd}`;
+        },
+        changeInputDate: function(num) {
+            const date = new Date(this.formCost.date);
+            const newDate = new Date(date.getTime() + num * 86400000);
+            this.$set(this.formCost, 'date', dateString(newDate)); 
         },
         logout: function() {
             firebase.auth().signOut().then(function() {
