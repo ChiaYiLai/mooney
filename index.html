@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./icons-192.png">
+    <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.7.1/firebase-ui-auth.css">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css'>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -12,21 +14,22 @@
 <body>
     <div id="app">
         <div class="sticky-top">
-            <div class="header-main">
+            <header class="header-main">
+                <i v-if="uid" @click="isSettings = !isSettings" class="material-icons">notes</i>
                 <h1>GoodThings</h1>
-                <i @click="handleEdit" class="material-icons" :class="{ 'active' : isEditCost }">add</i>
-                <button type="button" @click="logout" style="display: none;">登出</button>
-            </div>
+                <i v-if="uid" @click="handleEdit" class="material-icons" :class="{ 'active' : isEditCost }">add</i>
+            </header>
+            <template v-if="uid">
             <div class="box-form" :class="{ 'active' : isEditCost }">
                 <form class="form form-cost" @submit.prevent="updateCost(editCostType)">
                     <div>
                         <div class="input-date">
                             <i @click="changeInputDate(-1)" class="material-icons prev-day">chevron_left</i>
-                            <input v-model="formCost.date">
+                            <input v-model="formCost.date" @blur="changeInputDate(0)">
                             <i @click="changeInputDate(1)" class="material-icons next-day">chevron_right</i>
                         </div>
-                        <input v-model="formCost.name" placeholder="品項" required>
-                        <input v-model.number="formCost.price" placeholder="價格" type="number" required>
+                        <input v-model="formCost.name" placeholder="品項" @focus="$event.target.select()" required>
+                        <input v-model.number="formCost.price" placeholder="價格" @focus="$event.target.select()" type="number" required>
                         <button type="submit" :class="{ 'warning' : editCostType === 'put'}">{{ costSubmitText }}</button>
                     </div>
                     <ul class="list-tags">
@@ -43,16 +46,22 @@
                     <button type="submit">新增標籤</button>
                 </form>
             </div>
+            </template>
         </div>
 
         <main class="main-main">
             <form id="firebaseui-auth-container"></form>
+            <template v-if="uid">
             <div class="box-date">
-                <i @click="changeDate('prevMonth')" class="material-icons">chevron_left</i>
+                <i @click="changeDateActive(-1)" class="material-icons">chevron_left</i>
                 <h3>{{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月</h3>
-                <i @click="changeDate('nextMonth')" class="material-icons">chevron_right</i>
+                <i @click="changeDateActive(1)" class="material-icons">chevron_right</i>
             </div>
-            <h2 class="total-month">${{ nc(totalMonth) }}</h2>
+            <h2 v-if="costsMonth.length" class="total-month">${{ nc(totalMonth) }}</h2>
+            <div class="init-tip" v-else>
+                <p>新增本月的第一筆花費吧！</p>
+                <button @click="handleEdit" type="button" class="btn-lg">新增花費</button>
+            </div>
             <ul class="list-tags-total">
                 <li v-for="tag in tagsTotal" :key="tag.name" @click="toggleTag(tag.name, tagsFilter)" :class="{ 'active' : tagsFilter.includes(tag.name)}">
                     <h4>{{ tag.name }}</h4>
@@ -71,8 +80,23 @@
                 </li>
             </ul>
             <i class="material-icons delete-cost" v-if="costActiveId !== null" @click="updateCost('delete')">delete</i>
+            </template>
         </main>
-        
+        <footer class="footer-main">
+            <p>{{ dateActive.substring(0 ,4) }} 年總花費：${{ nc(totalYear) }} 元</p>
+            <address>Copyright &copy; Powered by <a href="https://chiayilai.com" target="_blank"></a>Chia Yi Lai</address></address>
+        </footer>
+
+        <template v-if="uid">
+        <div v-if="isSettings" class="modal" @click="isSettings = false">
+            <div @click.stop>
+                <h3><i class="material-icons">portrait</i>{{ email }}</h3>
+                <ul>
+                    <li @click="logout"><i class="material-icons">power_settings_new</i>登出</li>
+                </ul>
+            </div>
+        </div>
+        </template>
     </div>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>

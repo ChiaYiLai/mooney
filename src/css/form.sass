@@ -18,6 +18,7 @@ input
 	opacity: 0
 	transition: .4s
 	max-height: 0
+	border-bottom: 1px solid $border
 	&.active
 		visibility: visible
 		opacity: 1
@@ -30,6 +31,10 @@ input
 		grid-gap: .5rem
 		+md
 			grid-template-columns: 1fr 1fr 1fr 1fr
+		+lg
+			grid-template-columns: 20% 20% 20% 20%
+		+xl
+			grid-template-columns: 12% 12% 12% 12%
 		input
 			width: 100%
 	.input-date
@@ -60,6 +65,7 @@ button
 	background-color: $main
 	color: #fff
 	border: 0
+	border-radius: 2px
 	cursor: pointer
 	transition: .2s
 	&:hover
@@ -68,3 +74,5 @@ button
 		outline: 0
 	&.warning
 		background-color: $warning
+	&.btn-lg
+		padding: 12px 24px

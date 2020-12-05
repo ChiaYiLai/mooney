@@ -1,5 +1,5 @@
 import { firebaseConfig, uiConfig } from './config.js';
-import { dateString, notice } from './functions.js';
+import { dateString, notice, isValidDate } from './functions.js';
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
@@ -26,6 +26,7 @@ const app = new Vue({
         newTagName: '',
         isEditCost: false,
         isAddTag: false,
+        isSettings: false,
         dateActive: dateString(),
     },
     computed: {
@@ -82,7 +83,16 @@ const app = new Vue({
                 const dayTotal = item.list.reduce((a, b) => a + parseInt(b.price), 0);
                 item.total = dayTotal;
             });
+            target.sort((a,b) => a.date.localeCompare(b.date));
             return target;
+        },
+        costsYear: function() {
+            const { costs, dateActive } = this;
+            return costs.filter(cost => cost.date.substring(0, 4) === dateActive.substring(0, 4));
+        },
+        totalYear: function() {
+            const { costsYear } = this;
+            return costsYear.reduce((a, b) => a + parseInt(b.price, 10), 0);
         },
     },
     mounted: function() {
@@ -164,39 +174,34 @@ const app = new Vue({
             const index = target.findIndex(item => item === tag);
             index === -1 ? target.push(tag) : target.splice(index, 1);
         },
-        changeDate: function(type) {
-            const { dateActive } = this;
-            let yyyy = parseInt(dateActive.substring(0, 4), 10);
-            let MM = parseInt(dateActive.substring(5, 7), 10);
-            let dd = dateActive.substring(8, 10);
-            if (type === 'prevMonth') {
-                if (MM === 1) {
-                    yyyy = yyyy - 1;
-                    MM = 12;
-                } else {
-                    MM = MM - 1;
-                }
-            } else if (type === 'nextMonth') {
-                if (MM === 12) {
-                    yyyy = yyyy + 1;
-                    MM = 1;
-                } else {
-                    MM = MM + 1;
-                }
+        changeDateActive: function(month) {
+            const date = new Date(this.dateActive);
+            const yyyy = date.getFullYear();
+            const mm = date.getMonth();
+            const dd = date.getDate();
+            let newDate = null;
+            if (mm === 11 && month === 1) {
+                newDate = new Date(yyyy + 1, 0, dd);
+            } else if (mm === 0 && month === -1) {
+                newDate = new Date(yyyy - 1, 11, dd);
+            } else {
+                newDate = new Date(yyyy, mm + month, dd);
             }
-            MM = `0${MM}`.slice(-2);
-            this.dateActive = `${yyyy}-${MM}-${dd}`;
+            this.dateActive = dateString(newDate);
         },
-        changeInputDate: function(num) {
+        changeInputDate: function(day) {
             const date = new Date(this.formCost.date);
-            const newDate = new Date(date.getTime() + num * 86400000);
+            let newDate = new Date(date.getTime() + day * 86400 * 1000);
+            if (!isValidDate(date)) newDate = new Date();
             this.$set(this.formCost, 'date', dateString(newDate)); 
         },
         logout: function() {
+            const self = this;
             firebase.auth().signOut().then(function() {
                 notice('登出成功', 'success');
+                self.uid = '';
             }).catch(function(error) {
-                notice('發出錯誤');
+                notice(`error: ${error}`, 'error', false);
             });
         },
         nc: function(x) {
@@ -204,5 +209,6 @@ const app = new Vue({
         }
     },
 });
+
 
 
