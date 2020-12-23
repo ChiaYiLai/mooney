@@ -111,17 +111,29 @@ const app = new Vue({
     methods: {
         getData: function() {
             const { uid } = this;
-            const self = this;
             db.collection('users').doc(uid).get().then(doc => {
                 if (doc.exists) {
                     const { tags, costs } = doc.data();
-                    if (tags.length) self.tags = tags;
-                    self.costsOrigin = JSON.parse(JSON.stringify(costs));
+                    if (tags.length) this.tags = tags;
+                    this.costsOrigin = costs;
                     costs.map((cost, index) => cost.id = index);
-                    self.costs = costs;
+                    this.costs = costs;
                 } else {
                     db.collection('users').doc(uid).set({ tags: [], costs: [] });
                 }
+            });
+            this.a2hs();
+        },
+        a2hs: function() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log(reg))
+                    .catch(err => console.log(err));
+            }
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.userChoice.then((choiceResult) => {
+                    choiceResult.outcome === 'dismissed' ? console.log('User cancelled home screen install') : console.log('User added to home screen');
+                });
             });
         },
         handleEdit: function() {

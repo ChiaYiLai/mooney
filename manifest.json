@@ -1,14 +1,15 @@
 {
-    "short_name": "GoodThings",
-    "name": "GoodThings",
+    "short_name": "mooney lite",
+    "name": "mooney lite",
     "icons": [
         {
-            "src": "./icons-192.png",
+            "src": "./icon-192.png",
             "type": "image/png",
-            "sizes": "192x192"
+            "sizes": "192x192",
+            "purpose": "any maskable"
         },
         {
-            "src": "./icons-512.png",
+            "src": "./icon-512.png",
             "type": "image/png",
             "sizes": "512x512"
         }
