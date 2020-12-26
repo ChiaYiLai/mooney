@@ -157,10 +157,15 @@ const app = new Vue({
             if (type === 'put' || type === 'add') costsOrigin.push(newCost);
             db.collection('users').doc(uid).update({ costs: costsOrigin })
             .then(() => {
-                notice('更新成功', 'success');
+                let text = '新增成功';
                 this.getData();
                 this.costActiveId = null;
-                this.isEditCost = false;
+                if (type === 'put') text = '修改成功';
+                if (type === 'delete') {
+                    text = '刪除成功';
+                    this.isEditCost = false;
+                }
+                notice(text, 'success');
             })
             .catch(error => {
                 notice(`更新失敗：${error}`);

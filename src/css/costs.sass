@@ -23,7 +23,7 @@
 			padding: 0
 			li
 				border: 1px solid $border
-				border-radius: 2px
+				border-radius: $radius
 				padding: 8px 12px
 				margin: 0 .5rem .5rem 0
 				display: flex
@@ -53,3 +53,7 @@
 	display: flex
 	justify-content: center
 	align-items: center
+	cursor: pointer
+	transtition: .2s
+	&:hover
+		background-color: darken($danger, 10%)
