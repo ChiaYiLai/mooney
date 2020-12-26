@@ -29,7 +29,7 @@ pipelines:
     - step:
         name: 'Deployment to Production'
         deployment: production
-        trigger: 'manual'
+        # trigger: 'manual'
         script:
           - pipe: atlassian/ftp-deploy:0.3.5
             variables:
