@@ -24,16 +24,31 @@
 			li
 				border: 1px solid $border
 				border-radius: $radius
-				padding: 8px 12px
+				color: $gray
+				padding: 6px 12px
 				margin: 0 .5rem .5rem 0
 				display: flex
 				align-items: center
 				cursor: pointer
+				transition: .2s
+				&.sm
+					border-color: #999
+					color: #333
+				&.md
+					border-color: #999
+					color: #333
+					background-color: #f5f5f5
+				&.lg
+					border-color: $main
+					color: $main
 				&:hover
-					border-color: $border-dark
+					border-color: $warning
+					color: $warning
+					background-color: #fff
 				&.active
 					background-color: $warning
 					color: #fff
+					border-color: $warning
 				h4
 					font-size: 12px
 					margin: 0 .25rem 0 0

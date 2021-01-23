@@ -24,7 +24,12 @@ html(lang="zh-tw")
                             label {{ cost.date.substring(5) }}
                                 span ${{ nc(cost.total) }}
                             ul
-                                li(v-for="item in cost.list", :key="item.id", @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)", :class="{ 'active' : costActiveId === item.id }")
+                                li(
+                                    v-for="item in cost.list"
+                                    :key="item.id"
+                                    @click="editCost('put', item.id, cost.date, item.name, item.price, item.tags)"
+                                    :class="{ 'active' : costActiveId === item.id, 'lg' : item.price >= 5000, 'md' : item.price >= 1000 && item.price < 4999, 'sm' : item.price >= 500 && item.price < 999 }"
+                                )
                                     h4 {{ item.name }}
                                     h5 ${{ nc(item.price) }}
                     i.material-icons.delete-cost(v-if="costActiveId !== null", @click="updateCost('delete')") delete

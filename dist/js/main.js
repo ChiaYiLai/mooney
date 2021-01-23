@@ -127,7 +127,7 @@ const app = new Vue({
         a2hs: function() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log(reg))
+                    .then()
                     .catch(err => console.log(err));
             }
             window.addEventListener('beforeinstallprompt', function(e) {
