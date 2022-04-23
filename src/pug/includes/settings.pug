@@ -12,6 +12,8 @@
                 a(href="./terms.html", target="_blank")
                     i.material-icons list_alt
                     span 服務條款
+            li
+                a(@click="moveOldCosts") 匯入舊資料
             li(v-if="uid")
                 a(@click="logout")
                     i.material-icons power_settings_new

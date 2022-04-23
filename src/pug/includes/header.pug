@@ -12,8 +12,8 @@
                         i.material-icons.prev-day(@click="changeInputDate(-1)") chevron_left
                         input(v-model="costActive.date", @blur="changeInputDate(0)")
                         i.material-icons.next-day(@click="changeInputDate(1)") chevron_right
-                    input(v-model="costActive.name", placeholder="品項", @focus="$event.target.select()" required)
-                    input(v-model.number="costActive.price", placeholder="價格", @focus="$event.target.select()" type="number" required)
+                    input(v-model="costActive.name", placeholder="品項", required)
+                    input(v-model.number="costActive.price", placeholder="價格", type="number" required)
                     button(type="submit", :class="{ 'warning' : costActive.id }")
                         template(v-if="costActive.id") 更新
                         template(v-else) 新增
