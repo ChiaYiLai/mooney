@@ -8,9 +8,9 @@ html(lang="zh-tw")
             main.main-main                
                 template(v-if="uid")
                     .box-date
-                        i.material-icons(@click="changeDateActive(-1)") chevron_left
-                        h3 {{ dateActive.substring(0, 4) }} 年 {{ dateActive.substring(5, 7) }} 月
-                        i.material-icons(@click="changeDateActive(1)") chevron_right
+                        i.material-icons(@click="changeMonth(-1)") chevron_left
+                        h3 {{ year }} 年 {{ month }} 月
+                        i.material-icons(@click="changeMonth(1)") chevron_right
                     h2.total-month(v-if="costsMonth.length") ${{ nc(totalMonth) }}
                     .init-tip(v-else)
                         p 新增本月的第一筆花費吧！
@@ -33,7 +33,7 @@ html(lang="zh-tw")
                                     h4 {{ item.name }}
                                     h5 ${{ nc(item.price) }}
                     i.material-icons.delete-cost(v-if="costActive.id", @click="deleteCost") delete
-                    .total-year {{ dateActive.substring(0 ,4) }} 年總花費：${{ nc(totalYear) }} 元
+                    // .total-year {{ dateActive.substring(0 ,4) }} 年總花費：${{ nc(totalYear) }} 元
             include ./includes/footer.pug
             include ./includes/settings.pug
             include ./includes/js.pug

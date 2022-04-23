@@ -4,6 +4,9 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 const ui = new firebaseui.auth.AuthUI(firebase.auth());
 const db = firebase.firestore();
+const d = new Date();
+const thisYear = '' + d.getFullYear();
+const thisMonth = `0${d.getMonth() + 1}`.slice(-2);
 
 const app = new Vue({
     el: '#app',
@@ -11,7 +14,7 @@ const app = new Vue({
         uid: '',
         email: '',
         displayName: 'guest',
-        costs: [],
+        costsMonth: [],
         costActive: {},
         tags: ['食物', '家用', '交通'],
         tagsActive: [],
@@ -20,16 +23,11 @@ const app = new Vue({
         isEditCost: false,
         isEditTag: false,
         isSettings: false,
-        dateActive: dateString(),
+        year: thisYear,
+        month: thisMonth,
         oldCosts: [],
     },
     computed: {
-        costsMonth: function() {
-            const { costs, dateActive } = this;
-            const thisYear = dateActive.substring(0, 4);
-            const thisMonth = dateActive.substring(5, 7);
-            return costs.filter(cost => cost.y === thisYear && cost.m === thisMonth);
-        },
         totalMonth: function() {
             const { costsMonth } = this;
             return costsMonth.reduce((a, b) => a + parseInt(b.price, 10), 0);
@@ -76,14 +74,10 @@ const app = new Vue({
             target.sort((a,b) => a.d.localeCompare(b.d));
             return target;
         },
-        costsYear: function() {
-            const { costs, dateActive } = this;
-            const thisYear = dateActive.substring(0, 4);
-            return costs.filter(cost => cost.y === thisYear);
-        },
-        totalYear: function() {
-            const { costsYear } = this;
-            return costsYear.reduce((a, b) => a + parseInt(b.price, 10), 0);
+    },
+    watch: {
+        month: function(newMonth, oldMonth) {
+            this.getCostsMonth();
         },
     },
     mounted: function() {
@@ -93,7 +87,7 @@ const app = new Vue({
                 this.email = user.email;
                 this.displayName = user.displayName;
                 this.getData();
-                this.getCosts();
+                this.getCostsMonth();
             } else {
                 ui.start('#firebaseui-auth-container', uiConfig);
             }
@@ -101,6 +95,27 @@ const app = new Vue({
         this.a2hs();
     },
     methods: {
+        getCostsMonth: function() {
+            const { uid, year, month } = this;
+            let result = [];
+            console.log(year);
+            console.log(month)
+            let query = db.collection('costs');
+            query = query.where('userID', '==', uid);
+            query = query.where('y', '==', year);
+            query = query.where('m', '==', month);
+            query.get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        result.push({ id: doc.id, ...doc.data() });
+                    });
+                    console.log(result)
+                    this.costsMonth = result;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                });
+        },
         getCosts: function() {
             const { uid } = this;
             let result = [];
@@ -119,11 +134,10 @@ const app = new Vue({
             const { uid } = this;
             db.collection('users').doc(uid).get().then(doc => {
                 if (doc.exists) {
-                    const { tags, costs } = doc.data();
+                    const { tags, } = doc.data();
                     if (tags.length) this.tags = tags;
-                    this.oldCosts = costs;
                 } else {
-                    db.collection('users').doc(uid).set({ tags: [], costs: [] });
+                    db.collection('users').doc(uid).set({ tags: [], });
                 }
             });
         },
@@ -152,7 +166,7 @@ const app = new Vue({
             }
         },
         updateCost: function() {
-            const { uid, costActive, tagsActive } = this;
+            const { uid, costActive, tagsActive, year, month } = this;
             const { id, date, price, name } = costActive;
             const y = date.substring(0, 4);
             const m = date.substring(5, 7);
@@ -163,7 +177,7 @@ const app = new Vue({
                     .then(() => {
                         const index = this.costs.findIndex(cost => cost.id === id);
                         data.id = id;
-                        this.costs.splice(index, 1, data);
+                        if (index !== -1) this.costs.splice(index, 1, data);
                         notice(`${name} 已更新`, 'success');
                     })
                     .catch(error => {
@@ -173,7 +187,7 @@ const app = new Vue({
             return db.collection('costs').add(data)
                 .then(docRef => {
                     data.id = docRef.id;
-                    this.costs.push(data);
+                    if (y === year && m === month) this.costsMonth.push(data);
                     notice(`${name} 已新增`, 'success');
                 })
                 .catch(error => {
@@ -184,8 +198,8 @@ const app = new Vue({
             const { id, name } = this.costActive;
             db.collection('costs').doc(id).delete()
                 .then(() => {
-                    const index = this.costs.findIndex(cost => cost.id === id);
-                    this.costs.splice(index, 1);
+                    const index = this.costsMonth.findIndex(cost => cost.id === id);
+                    if (index !== -1) this.costs.splice(index, 1);
                     this.isEditCost = false;
                     notice(`${name} 已刪除`, 'success');
                 })
@@ -218,22 +232,20 @@ const app = new Vue({
             const index = target.findIndex(item => item === tag);
             index === -1 ? target.push(tag) : target.splice(index, 1);
         },
-        changeDateActive: function(month) {
-            const date = new Date(this.dateActive);
-            const yyyy = date.getFullYear();
-            const mm = date.getMonth();
-            const dd = date.getDate();
-            let newDate = null;
-            if (mm === 11 && month === 1) {
-                newDate = new Date(yyyy + 1, 0, dd);
-            } else if (mm === 0 && month === -1) {
-                newDate = new Date(yyyy - 1, 11, dd);
+        changeMonth: function(num) {
+            const { year, month } = this;
+            if (month === '12' && num === 1) {
+                this.year = '' + (parseInt(year) + 1);
+                this.month = '01';
+            } else if (month === '01' && num === -1) {
+                this.year = '' + (parseInt(year) - 1);
+                this.month = '12';
             } else {
-                newDate = new Date(yyyy, mm + month, dd);
+                this.month = ('0' + (parseInt(month) + num)).slice(-2);
             }
-            this.dateActive = dateString(newDate);
         },
         changeInputDate: function(day) {
+            const { costActive } = this;
             const date = new Date(costActive.date);
             let newDate = new Date(date.getTime() + day * 86400 * 1000);
             if (!isValidDate(date)) newDate = new Date();
