@@ -98,8 +98,6 @@ const app = new Vue({
         getCostsMonth: function() {
             const { uid, year, month } = this;
             let result = [];
-            console.log(year);
-            console.log(month)
             let query = db.collection('costs');
             query = query.where('userID', '==', uid);
             query = query.where('y', '==', year);
@@ -109,7 +107,6 @@ const app = new Vue({
                     querySnapshot.forEach((doc) => {
                         result.push({ id: doc.id, ...doc.data() });
                     });
-                    console.log(result)
                     this.costsMonth = result;
                 })
                 .catch((error) => {
