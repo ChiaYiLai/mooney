@@ -13,16 +13,10 @@ const app = new Vue({
         email: '',
         displayName: 'guest',
         costs: [],
-        editCostType: 'add',
-        costActiveId: null,
+        costActive: {},
         tags: ['食物', '家用', '交通'],
         tagsActive: [],
         tagsFilter: [],
-        formCost: {
-            date: dateString(),
-            name: '',
-            price: null,
-        },
         newTagName: '',
         isEditCost: false,
         isEditTag: false,
@@ -30,15 +24,11 @@ const app = new Vue({
         dateActive: dateString(),
     },
     computed: {
-        costSubmitText: function() {
-            const { editCostType } = this;
-            let text = '新增';
-            if (editCostType === 'put') text = '修改';
-            return text;
-        },
         costsMonth: function() {
             const { costs, dateActive } = this;
-            return costs.filter(cost => cost.date.substring(0, 7) === dateActive.substring(0, 7));
+            const thisYear = dateActive.substring(0, 4);
+            const thisMonth = dateActive.substring(5, 7);
+            return costs.filter(cost => cost.y === thisYear && cost.m === thisMonth);
         },
         totalMonth: function() {
             const { costsMonth } = this;
@@ -46,8 +36,9 @@ const app = new Vue({
         },
         tagsTotal: function() {
             const { costsMonth } = this;
+            console.log(costsMonth)
             let allTags = [];
-            costsMonth.map(cost => cost.tags.map(tag => allTags.push(tag)));
+            if (costsMonth) costsMonth.map(cost => cost.tags.map(tag => allTags.push(tag)));
             allTags = Array.from(new Set(allTags));
             let tagsTotal = [];
             allTags.map(tag => {
@@ -68,27 +59,28 @@ const app = new Vue({
             }
             let target = [];
             newCostsMonth.map(cost => {
-                const { id, date, name, price, tags } = cost;
-                const index = target.findIndex(item => item.date === date);
+                const { id, y, m, d, name, price, tags } = cost;
+                const index = target.findIndex(item => item.d === d);
                 if (index === -1) {
                     target.push({
-                        date,
-                        list: [{ id, name, price, tags, }],
+                        d,
+                        list: [{ id, name, price, tags, y, m, d }],
                     });
                 } else {
-                    target[index].list.push({ id, name, price, tags, });
+                    target[index].list.push({ id, name, price, tags, y, m, d });
                 }
             });
             target.map(item => {
                 const dayTotal = item.list.reduce((a, b) => a + parseInt(b.price), 0);
                 item.total = dayTotal;
             });
-            target.sort((a,b) => a.date.localeCompare(b.date));
+            target.sort((a,b) => a.d.localeCompare(b.d));
             return target;
         },
         costsYear: function() {
             const { costs, dateActive } = this;
-            return costs.filter(cost => cost.date.substring(0, 4) === dateActive.substring(0, 4));
+            const thisYear = dateActive.substring(0, 4);
+            return costs.filter(cost => cost.y === thisYear);
         },
         totalYear: function() {
             const { costsYear } = this;
@@ -96,33 +88,44 @@ const app = new Vue({
         },
     },
     mounted: function() {
-        const self = this;
-        firebase.auth().onAuthStateChanged(function(user) {
+        firebase.auth().onAuthStateChanged(user => {
             if (user) {
-                self.uid = user.uid;
-                self.email = user.email;
-                self.displayName = user.displayName;
-                self.getData();
+                this.uid = user.uid;
+                this.email = user.email;
+                this.displayName = user.displayName;
+                this.getData();
+                this.getCosts();
             } else {
                 ui.start('#firebaseui-auth-container', uiConfig);
             }
         });
+        this.a2hs();
     },
     methods: {
+        getCosts: function() {
+            const { uid } = this;
+            let result = [];
+            db.collection('costs').where('userID', '==', uid).get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        result.push({ id: doc.id, ...doc.data() });
+                    });
+                    this.costs = result;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                });
+        },
         getData: function() {
             const { uid } = this;
             db.collection('users').doc(uid).get().then(doc => {
                 if (doc.exists) {
                     const { tags, costs } = doc.data();
                     if (tags.length) this.tags = tags;
-                    this.costsOrigin = costs;
-                    costs.map((cost, index) => cost.id = index);
-                    this.costs = costs;
                 } else {
                     db.collection('users').doc(uid).set({ tags: [], costs: [] });
                 }
             });
-            this.a2hs();
         },
         a2hs: function() {
             if ('serviceWorker' in navigator) {
@@ -136,40 +139,59 @@ const app = new Vue({
                 });
             });
         },
-        handleEdit: function() {
-            this.isEditCost = !this.isEditCost;
-            this.costActiveId = null;
-            this.editCostType = 'add';
-        },
-        editCost: function(type, id=0, date="", name="", price=0, tags=[]) {
-            this.isEditCost = true;
-            this.editCostType = type;
-            if (type === 'put') {
-                this.costActiveId = id;
-                this.formCost = { date, name, price };
-                this.tagsActive = tags;
+        editCost: function(cost) {
+            if (cost.id) {
+                this.isEditCost = true;
+                cost.date = `${cost.y}-${cost.m}-${cost.d}`;
+                this.costActive = cost;
+                this.tagsActive = cost.tags;
+            } else {
+                this.isEditCost = !this.isEditCost;
+                const data = { date: dateString() };
+                this.costActive = data;
             }
         },
-        updateCost: function(type) {
-            const { uid, formCost, tagsActive, costsOrigin } = this;
-            const newCost = Object.assign(formCost, { tags: tagsActive });
-            if (type === 'put' || type === 'delete') costsOrigin.splice(this.costActiveId, 1);
-            if (type === 'put' || type === 'add') costsOrigin.push(newCost);
-            db.collection('users').doc(uid).update({ costs: costsOrigin })
-            .then(() => {
-                let text = '新增成功';
-                this.getData();
-                this.costActiveId = null;
-                if (type === 'put') text = '修改成功';
-                if (type === 'delete') {
-                    text = '刪除成功';
+        updateCost: function() {
+            const { uid, costActive, tagsActive } = this;
+            const { id, date, price, name } = costActive;
+            const y = date.substring(0, 4);
+            const m = date.substring(5, 7);
+            const d = date.substring(8, 10);
+            let data = { userID: uid, price, name, y, m, d, tags: tagsActive, };
+            if (id) {
+                return db.collection('costs').doc(id).update(data)
+                    .then(() => {
+                        const index = this.costs.findIndex(cost => cost.id === id);
+                        data.id = id;
+                        this.costs.splice(index, 1, data);
+                        notice(`${name} 已更新`, 'success');
+                    })
+                    .catch(error => {
+                        console.error("Error adding document: ", error);
+                    });
+            }
+            return db.collection('costs').add(data)
+                .then(docRef => {
+                    data.id = docRef.id;
+                    this.costs.push(data);
+                    notice(`${name} 已新增`, 'success');
+                })
+                .catch(error => {
+                    console.error("Error adding document: ", error);
+                });
+        },
+        deleteCost: function() {
+            const { id, name } = this.costActive;
+            db.collection('costs').doc(id).delete()
+                .then(() => {
+                    const index = this.costs.findIndex(cost => cost.id === id);
+                    this.costs.splice(index, 1);
                     this.isEditCost = false;
-                }
-                notice(text, 'success');
-            })
-            .catch(error => {
-                notice(`更新失敗：${error}`);
-            });
+                    notice(`${name} 已刪除`, 'success');
+                })
+                .catch(error => {
+                    console.error("Error adding document: ", error);
+                });;
         },
         updateTag: function(type, tag='') {
             const { uid, tags, newTagName } = this;
@@ -183,14 +205,14 @@ const app = new Vue({
                 tags.splice(index, 1)
             }
             db.collection('users').doc(uid).update({ tags })
-            .then(() => {
-                notice('更新標籤成功', 'success')
-                self.getData();
-                self.tagsActive = [];
-            })
-            .catch(error => {
-                notice(`更新標籤失敗：${error}`);
-            });
+                .then(() => {
+                    notice('更新標籤成功', 'success')
+                    self.getData();
+                    self.tagsActive = [];
+                })
+                .catch(error => {
+                    notice(`更新標籤失敗：${error}`);
+                });
         },
         toggleTag: function(tag, target) {
             const index = target.findIndex(item => item === tag);
@@ -212,10 +234,10 @@ const app = new Vue({
             this.dateActive = dateString(newDate);
         },
         changeInputDate: function(day) {
-            const date = new Date(this.formCost.date);
+            const date = new Date(costActive.date);
             let newDate = new Date(date.getTime() + day * 86400 * 1000);
             if (!isValidDate(date)) newDate = new Date();
-            this.$set(this.formCost, 'date', dateString(newDate)); 
+            this.$set(costActive, 'date', dateString(newDate)); 
         },
         logout: function() {
             const self = this;

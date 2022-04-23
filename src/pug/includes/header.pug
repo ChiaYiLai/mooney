@@ -3,23 +3,25 @@
         i.material-icons(@click="isSettings = !isSettings") notes
         h1
             a(href="/") mooney
-        i.material-icons(v-if="uid", @click="handleEdit", :class="{ 'active' : isEditCost }") add
+        i.material-icons(v-if="uid", @click="editCost", :class="{ 'active' : isEditCost }") add
     template(v-if="uid")
-    .box-form(:class="{ 'active' : isEditCost }")
-        form.form.form-cost(@submit.prevent="updateCost(editCostType)")
-            div
-                .input-date
-                    i.material-icons.prev-day(@click="changeInputDate(-1)") chevron_left
-                    input(v-model="formCost.date", @blur="changeInputDate(0)")
-                    i.material-icons.next-day(@click="changeInputDate(1)") chevron_right
-                input(v-model="formCost.name", placeholder="品項", @focus="$event.target.select()" required)
-                input(v-model.number="formCost.price", placeholder="價格", @focus="$event.target.select()" type="number" required)
-                button(type="submit", :class="{ 'warning' : editCostType === 'put'}") {{ costSubmitText }}
-            ul.list-tags
-                li(v-for="tag in tags", :key="tag", :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag, tagsActive)") {{ tag }}
-                    i.material-icons(v-if="isEditTag" @click="updateTag('delete', tag)") clear
-                li(@click="isEditTag = !isEditTag")
-                    i.material-icons.mi-lg(:class="{ 'active' : isEditTag }") add_circle
-        form.form.form-tag(v-if="isEditTag", @submit.prevent="updateTag('add')")
-            input(v-model="newTagName", placeholder="標籤名")
-            button(type="submit") 新增標籤
+        .box-form(:class="{ 'active' : isEditCost }")
+            form.form.form-cost(@submit.prevent="updateCost")
+                div
+                    .input-date
+                        i.material-icons.prev-day(@click="changeInputDate(-1)") chevron_left
+                        input(v-model="costActive.date", @blur="changeInputDate(0)")
+                        i.material-icons.next-day(@click="changeInputDate(1)") chevron_right
+                    input(v-model="costActive.name", placeholder="品項", @focus="$event.target.select()" required)
+                    input(v-model.number="costActive.price", placeholder="價格", @focus="$event.target.select()" type="number" required)
+                    button(type="submit", :class="{ 'warning' : costActive.id }")
+                        template(v-if="costActive.id") 更新
+                        template(v-else) 新增
+                ul.list-tags
+                    li(v-for="tag in tags", :key="tag", :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag, tagsActive)") {{ tag }}
+                        i.material-icons(v-if="isEditTag" @click="updateTag('delete', tag)") clear
+                    li(@click="isEditTag = !isEditTag")
+                        i.material-icons.mi-lg(:class="{ 'active' : isEditTag }") add_circle
+            form.form.form-tag(v-if="isEditTag", @submit.prevent="updateTag('add')")
+                input(v-model="newTagName", placeholder="標籤名")
+                button(type="submit") 新增標籤
