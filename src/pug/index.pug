@@ -32,8 +32,8 @@ html(lang="zh-tw")
                                 )
                                     h4 {{ item.name }}
                                     h5 ${{ nc(item.price) }}
-                    i.material-icons.delete-cost(v-if="costActive.id", @click="deleteCost") delete
-                    // .total-year {{ dateActive.substring(0 ,4) }} 年總花費：${{ nc(totalYear) }} 元
+                    a.delete-cost(v-if="costActive.id", @click="deleteCost")
+                        i.material-icons delete
             include ./includes/footer.pug
             include ./includes/settings.pug
             include ./includes/js.pug

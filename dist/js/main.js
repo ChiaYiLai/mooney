@@ -172,9 +172,9 @@ const app = new Vue({
             if (id) {
                 return db.collection('costs').doc(id).update(data)
                     .then(() => {
-                        const index = this.costs.findIndex(cost => cost.id === id);
+                        const index = this.costsMonth.findIndex(cost => cost.id === id);
                         data.id = id;
-                        if (index !== -1) this.costs.splice(index, 1, data);
+                        if (index !== -1) this.costsMonth.splice(index, 1, data);
                         notice(`${name} 已更新`, 'success');
                     })
                     .catch(error => {
@@ -196,8 +196,9 @@ const app = new Vue({
             db.collection('costs').doc(id).delete()
                 .then(() => {
                     const index = this.costsMonth.findIndex(cost => cost.id === id);
-                    if (index !== -1) this.costs.splice(index, 1);
+                    if (index !== -1) this.costsMonth.splice(index, 1);
                     this.isEditCost = false;
+                    this.costActive = {};
                     notice(`${name} 已刪除`, 'success');
                 })
                 .catch(error => {
