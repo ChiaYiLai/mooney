@@ -1,6 +1,5 @@
 import { firebaseConfig, uiConfig } from './config.js';
 import { dateString, notice, isValidDate } from './functions.js';
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 const ui = new firebaseui.auth.AuthUI(firebase.auth());
