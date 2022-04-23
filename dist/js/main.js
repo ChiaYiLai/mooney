@@ -101,41 +101,6 @@ const app = new Vue({
         this.a2hs();
     },
     methods: {
-        addOldCost: function() {
-            const costs = [{
-                price: 100,
-                name: '111',
-                date: '2022-04-23',
-                tags: [],
-            },
-            {
-                price: 100,
-                name: '222',
-                date: '2022-04-23',
-                tags: ['肉弟', '交通'],
-            }]
-            db.collection('users').doc(this.uid).update({ costs, });
-        },
-        moveOldCosts: function() {
-            const { uid, oldCosts } = this;
-            oldCosts.map(cost => {
-                const { date, name, price, tags } = cost;
-                const y = date.substring(0, 4);
-                const m = date.substring(5, 7);
-                const d = date.substring(8, 10);
-                const newCost = { userID: uid, name, price , tags, y, m, d };
-                console.log(newCost)
-                db.collection('costs').add(newCost)
-                    .then(docRef => {
-                        //data.id = docRef.id;
-                        //this.costs.push(data);
-                        //notice(`${name} 已新增`, 'success');
-                    })
-                    .catch(error => {
-                        console.error("Error adding document: ", error);
-                    });
-            })
-        },
         getCosts: function() {
             const { uid } = this;
             let result = [];
