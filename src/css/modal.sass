@@ -9,6 +9,11 @@
 	display: flex
 	justify-content: center
 	align-items: center
+	&.modal-lg
+		> div
+			max-width: none
+			max-height: 80%
+			overflow: auto
 	> div
 		background-color: #fff
 		padding: 1rem
@@ -22,7 +27,7 @@
 			border-bottom: 1px solid $border
 			padding: 1rem 1rem 1.5rem
 			margin: 0 0 1rem
-		ul
+		.list-links
 			list-style: none
 			margin: 0
 			padding: 0

@@ -11,6 +11,7 @@ const thisMonth = `0${d.getMonth() + 1}`.slice(-2);
 const app = new Vue({
     el: '#app',
     data: {
+        user: {},
         uid: '',
         email: '',
         displayName: 'guest',
@@ -23,9 +24,15 @@ const app = new Vue({
         isEditCost: false,
         isEditTag: false,
         isSettings: false,
+        isReport: false,
         year: thisYear,
         month: thisMonth,
         oldCosts: [],
+        isUpdateReport: false,
+        reportData: [],
+        reportTags: [],
+        reportTotal: 0,
+        // reportWords: ['車', '飯', '麵'],
     },
     computed: {
         totalMonth: function() {
@@ -74,6 +81,10 @@ const app = new Vue({
             target.sort((a,b) => a.d.localeCompare(b.d));
             return target;
         },
+        reportSort: function() {
+            const { reportData } = this;
+            return reportData.sort((a, b) => b.price - a.price);
+        }
     },
     watch: {
         month: function(newMonth, oldMonth) {
@@ -132,6 +143,7 @@ const app = new Vue({
             db.collection('users').doc(uid).get().then(doc => {
                 if (doc.exists) {
                     const { tags, } = doc.data();
+                    this.user = doc.data();
                     if (tags.length) this.tags = tags;
                 } else {
                     db.collection('users').doc(uid).set({ tags: [], });
@@ -261,6 +273,53 @@ const app = new Vue({
         },
         nc: function(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
+        handleReport: function() {
+            let { user: { updateReportTime, report }, } = this;
+            updateReportTime = updateReportTime || 0;
+            if (report && report.total) {
+                this.reportData = report.data;
+                this.reportTotal = report.total;
+                this.reportTags = report.tagsData;
+            }
+            if (Date.now() - updateReportTime > 30 * 24 * 60 * 60 * 1000) {
+                this.isUpdateReport = true;
+            }
+            this.isReport = true;
+        },
+        updateReport: function() {
+            const { uid, year, tags } = this;
+            let result = [];
+            let tagsData = [];
+            tags.map(tag => tagsData.push({ name: tag, total: 0 }));
+            let total = 0;
+            db.collection('costs').where('userID', '==', uid).where('y', '==', year).get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const { name, price, tags } = doc.data();
+                        const target = result.find(item => item.name === name);
+                        if (target) {
+                            target.price += price;
+                        } else {
+                            result.push({ name, price });
+                        }
+                        tags.map(tag => {
+                            const targetTag = tagsData.find(item => item.name === tag);
+                            if (targetTag) targetTag.total += price;
+                        })
+                        total += price;
+                    });
+                    this.reportData = result;
+                    this.reportTotal = total;
+                    this.reportTags = tagsData;
+                    setTimeout(() => {
+                        db.collection('users').doc(uid).update({ report: { data: result, tagsData, total, }, updateReportTime: Date.now(), });
+                    }, 3000 );
+                    this.isUpdateReport = false;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                });
         }
     },
 });

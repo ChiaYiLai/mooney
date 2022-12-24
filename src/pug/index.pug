@@ -19,11 +19,11 @@ html(lang="zh-tw")
                         li(v-for="tag in tagsTotal", :key="tag.name", @click="toggleTag(tag.name, tagsFilter)", :class="{ 'active' : tagsFilter.includes(tag.name)}")
                             h4 {{ tag.name }}
                             h5 ${{ nc(tag.total) }}
-                    ul.list-costs
+                    ul.list-dates
                         li(v-for="cost in costsList" :key="cost.date")
                             label {{ cost.d }}
                                 span ${{ nc(cost.total) }}
-                            ul
+                            ul.list-costs
                                 li(
                                     v-for="item in cost.list"
                                     :key="item.id"
@@ -36,4 +36,5 @@ html(lang="zh-tw")
                         i.material-icons delete
             include ./includes/footer.pug
             include ./includes/settings.pug
+            include ./includes/report.pug
             include ./includes/js.pug

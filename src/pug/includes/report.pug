@@ -1,0 +1,13 @@
+.modal.modal-lg(v-if="isReport", @click="isReport = false")
+    div(@click.stop)
+        h3 {{ year }} 年報表
+        button(v-if="isUpdateReport" type="button" @click="updateReport") 更新
+        h4.total-month.text-center 年支出：{{ reportTotal }}
+        ul.list-tags-total
+            li(v-for="tag in reportTags" :key="tag.name")
+                h4 {{ tag.name }}
+                h5 ${{ nc(tag.total) }}
+        ul.list-costs
+            li(v-for="item in reportSort" :key="item.name")
+                h4 {{ item.name }}
+                h5 ${{ nc(item.price) }}

@@ -3,7 +3,7 @@
         h3(v-if="uid", :title="email")
             i.material-icons portrait
             span {{ email.substring(0, email.indexOf('@')) }}
-        ul
+        ul.list-links
             li
                 a(href="./privacy.html", target="_blank")
                     i.material-icons verified_user
@@ -12,6 +12,10 @@
                 a(href="./terms.html", target="_blank")
                     i.material-icons list_alt
                     span 服務條款
+            li
+                a(href="#" @click.prevent="handleReport")
+                    i.material-icons analytics
+                    span 年報表
             li(v-if="uid")
                 a(@click="logout")
                     i.material-icons power_settings_new

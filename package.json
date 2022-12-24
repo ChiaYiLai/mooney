@@ -6,16 +6,13 @@
     "author": "Chia Yi Lai",
     "license": "ISC",
     "dependencies": {
-        "http-server": "^0.12.3",
-        "node-sass": "^5.0.0",
+        "sass": "^1.52.2",
         "onchange": "^7.1.0",
         "pug-cli": "^1.0.0-alpha6"
     },
     "scripts": {
         "server": "http-server ./ -p 8002",
         "pug": "pug -w ./src/pug/*.pug -o ./",
-        "sass": "node-sass --output-style compressed ./src/css/main.sass -o ./dist/css/",
-        "sass-w": "onchange \"./src/css/**/*.sass\" -- npm run sass",
-        "w": "concurrently \"npm run server\" \"npm run sass\" \"npm run sass-w\" \"npm run pug\" "
+        "sass": "sass --watch --update --no-source-map --style=compressed ./src/css/main.sass:./dist/css/main.css"
     }
 }
