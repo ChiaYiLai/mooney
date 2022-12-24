@@ -10,5 +10,5 @@ pipelines:
             variables:
               USER: chiayila
               PASSWORD: wpvyrn520
-              SERVER: 198.55.121.39
+              SERVER: 103.123.243.5
               REMOTE_PATH: /public_html/mooney
