@@ -17,6 +17,7 @@ const app = new Vue({
         displayName: 'guest',
         costsMonth: [],
         costActive: {},
+        names: ['全聯', '超商', '飲料', '飯', '麵', '麵包', '停車費', '加油', '房貸', '健保費'],
         tags: ['食物', '家用', '交通'],
         tagsActive: [],
         tagsFilter: [],
@@ -170,7 +171,7 @@ const app = new Vue({
                 this.tagsActive = cost.tags;
             } else {
                 this.isEditCost = !this.isEditCost;
-                const data = { date: dateString() };
+                const data = { date: dateString(), name: '' };
                 this.costActive = data;
             }
         },
