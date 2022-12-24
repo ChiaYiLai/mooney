@@ -1,4 +1,4 @@
-.modal.modal-lg(v-if="isReport", @click="isReport = false")
+.modal.modal-lg(v-if="isReport" @click="isReport = false")
     div(@click.stop)
         h3 {{ year }} 年報表
         button(v-if="isUpdateReport" type="button" @click="updateReport") 更新

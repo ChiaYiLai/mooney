@@ -14,9 +14,9 @@ html(lang="zh-tw")
                     h2.total-month(v-if="costsMonth.length") ${{ nc(totalMonth) }}
                     .init-tip(v-else)
                         p 新增本月的第一筆花費吧！
-                        button.btn-lg(@click="editCost", type="button") 新增花費
+                        button.btn-lg(@click="editCost" type="button") 新增花費
                     ul.list-tags-total
-                        li(v-for="tag in tagsTotal", :key="tag.name", @click="toggleTag(tag.name, tagsFilter)", :class="{ 'active' : tagsFilter.includes(tag.name)}")
+                        li(v-for="tag in tagsTotal" :key="tag.name" @click="toggleTag(tag.name, tagsFilter)" :class="{ 'active' : tagsFilter.includes(tag.name)}")
                             h4 {{ tag.name }}
                             h5 ${{ nc(tag.total) }}
                     ul.list-dates
@@ -32,7 +32,7 @@ html(lang="zh-tw")
                                 )
                                     h4 {{ item.name }}
                                     h5 ${{ nc(item.price) }}
-                    a.delete-cost(v-if="costActive.id", @click="deleteCost")
+                    a.delete-cost(v-if="costActive.id" @click="deleteCost")
                         i.material-icons delete
             include ./includes/footer.pug
             include ./includes/settings.pug

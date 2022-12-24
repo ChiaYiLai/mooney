@@ -1,5 +1,5 @@
 {
-    "name": "goodthings",
+    "name": "mooney",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -7,11 +7,9 @@
     "license": "ISC",
     "dependencies": {
         "sass": "^1.52.2",
-        "onchange": "^7.1.0",
         "pug-cli": "^1.0.0-alpha6"
     },
     "scripts": {
-        "server": "http-server ./ -p 8002",
         "pug": "pug -w ./src/pug/*.pug -o ./",
         "sass": "sass --watch --update --no-source-map --style=compressed ./src/css/main.sass:./dist/css/main.css"
     }

@@ -1,6 +1,6 @@
-.modal(v-if="isSettings", @click="isSettings = false")
+.modal(v-if="isSettings" @click="isSettings = false")
     div(@click.stop)
-        h3(v-if="uid", :title="email")
+        h3(v-if="uid" :title="email")
             i.material-icons portrait
             span {{ email.substring(0, email.indexOf('@')) }}
         ul.list-links
