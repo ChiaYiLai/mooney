@@ -33,7 +33,7 @@ const app = new Vue({
         reportData: [],
         reportTags: [],
         reportTotal: 0,
-        // reportWords: ['車', '飯', '麵'],
+        changeMonthTimer: null,
     },
     computed: {
         totalMonth: function() {
@@ -57,40 +57,39 @@ const app = new Vue({
             return tagsTotal;
         },
         costsList: function() {
-            const { costsMonth, tagsFilter } = this;
-            let newCostsMonth = JSON.parse(JSON.stringify(costsMonth));
+            const { costsMonth, tagsFilter } = this
+            let newCostsMonth = JSON.parse(JSON.stringify(costsMonth))
             if (tagsFilter.length) {
-                newCostsMonth = newCostsMonth.filter(cost => cost.tags.some(tag => tagsFilter.includes(tag)));
+                newCostsMonth = newCostsMonth.filter(cost => cost.tags.some(tag => tagsFilter.includes(tag)))
             }
-            let target = [];
+            let target = []
             newCostsMonth.map(cost => {
-                const { id, y, m, d, name, price, tags } = cost;
-                const index = target.findIndex(item => item.d === d);
+                const { id, y, m, d, name, price, tags } = cost
+                const daysOfWeek = ['日', '一', '二', '三', '四', '五', '六']
+                const date = new Date(`${y}-${m}-${d}`)
+                const day = daysOfWeek[date.getDay()]
+                const index = target.findIndex(item => item.d === d)
                 if (index === -1) {
                     target.push({
                         d,
+                        day,
                         list: [{ id, name, price, tags, y, m, d }],
-                    });
+                    })
                 } else {
-                    target[index].list.push({ id, name, price, tags, y, m, d });
+                    target[index].list.push({ id, name, price, tags, y, m, d })
                 }
-            });
+            })
             target.map(item => {
-                const dayTotal = item.list.reduce((a, b) => a + parseInt(b.price), 0);
-                item.total = dayTotal;
-            });
-            target.sort((a,b) => a.d.localeCompare(b.d));
-            return target;
+                const dayTotal = item.list.reduce((a, b) => a + parseInt(b.price), 0)
+                item.total = dayTotal
+            })
+            target.sort((a,b) => a.d.localeCompare(b.d))
+            return target
         },
         reportSort: function() {
             const { reportData } = this;
             return reportData.sort((a, b) => b.price - a.price);
         }
-    },
-    watch: {
-        month: function(newMonth, oldMonth) {
-            this.getCostsMonth();
-        },
     },
     mounted: function() {
         firebase.auth().onAuthStateChanged(user => {
@@ -254,13 +253,17 @@ const app = new Vue({
             } else {
                 this.month = ('0' + (parseInt(month) + num)).slice(-2);
             }
+            clearTimeout(this.changeMonthTimer)
+            this.changeMonthTimer = setTimeout(() => {
+                this.getCostsMonth()
+            }, 300)
         },
         changeInputDate: function(day) {
             const { costActive } = this;
             const date = new Date(costActive.date);
             let newDate = new Date(date.getTime() + day * 86400 * 1000);
             if (!isValidDate(date)) newDate = new Date();
-            this.$set(costActive, 'date', dateString(newDate)); 
+            this.$set(costActive, 'date', dateString(newDate));
         },
         logout: function() {
             const self = this;

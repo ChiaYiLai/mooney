@@ -12,13 +12,13 @@
                         i.material-icons.prev-day(@click="changeInputDate(-1)") chevron_left
                         input(v-model="costActive.date" @blur="changeInputDate(0)")
                         i.material-icons.next-day(@click="changeInputDate(1)") chevron_right
-                    input.input-name(v-model="costActive.name" placeholder="品項", required)
-                    input(v-model.number="costActive.price" placeholder="價格", type="number" required)
+                    input.input-name(v-model="costActive.name" placeholder="品項" required list="list-names")
+                    input(v-model.number="costActive.price" placeholder="價格" type="number" required)
                     button(type="submit" :class="{ 'warning' : costActive.id }")
                         template(v-if="costActive.id") 更新
                         template(v-else) 新增
-                ul.list-names
-                    li(v-for="name in names" :key="name" @click="costActive.name = name") {{ name }}
+                datalist#list-names
+                    option(v-for="name in names" :key="name" :value="name")
                 ul.list-tags
                     li(v-for="tag in tags" :key="tag" :class="{ 'active' : tagsActive.includes(tag)}" @click="toggleTag(tag, tagsActive)") {{ tag }}
                         i.material-icons(v-if="isEditTag" @click="updateTag('delete', tag)") clear

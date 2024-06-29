@@ -21,7 +21,8 @@ html(lang="zh-tw")
                             h5 ${{ nc(tag.total) }}
                     ul.list-dates
                         li(v-for="cost in costsList" :key="cost.date")
-                            label {{ cost.d }}
+                            label
+                                b {{ cost.d }} ({{ cost.day }})
                                 span ${{ nc(cost.total) }}
                             ul.list-costs
                                 li(

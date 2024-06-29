@@ -2,7 +2,7 @@
     div(@click.stop)
         h3 {{ year }} 年報表
         button(v-if="isUpdateReport" type="button" @click="updateReport") 更新
-        h4.total-month.text-center 年支出：{{ reportTotal }}
+        h4.total-month.text-center 年支出：${{ nc(reportTotal) }}<br>平均月支出：${{ nc(parseInt(reportTotal / 12)) }}<br>平均日支出：${{ nc(parseInt(reportTotal / 365)) }}
         ul.list-tags-total
             li(v-for="tag in reportTags" :key="tag.name")
                 h4 {{ tag.name }}
