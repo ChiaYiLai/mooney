@@ -1,12 +1,12 @@
-import { firebaseConfig, uiConfig } from './config.js';
-import { dateString, notice, isValidDate } from './functions.js';
-firebase.initializeApp(firebaseConfig);
-firebase.analytics();
-const ui = new firebaseui.auth.AuthUI(firebase.auth());
-const db = firebase.firestore();
-const d = new Date();
-const thisYear = '' + d.getFullYear();
-const thisMonth = `0${d.getMonth() + 1}`.slice(-2);
+import { firebaseConfig, uiConfig } from './config.js'
+import { dateString, notice, isValidDate } from './functions.js'
+firebase.initializeApp(firebaseConfig)
+firebase.analytics()
+const ui = new firebaseui.auth.AuthUI(firebase.auth())
+const db = firebase.firestore()
+const d = new Date()
+const thisYear = '' + d.getFullYear()
+const thisMonth = `0${d.getMonth() + 1}`.slice(-2)
 
 const app = new Vue({
     el: '#app',
@@ -15,10 +15,12 @@ const app = new Vue({
         uid: '',
         email: '',
         displayName: 'guest',
+        year: thisYear,
+        month: thisMonth,
         costsMonth: [],
         costActive: {},
-        names: ['全聯', '超商', '飲料', '飯', '麵', '麵包', '停車費', '加油', '房貸', '健保費'],
-        tags: ['食物', '家用', '交通'],
+        names: ['全聯', '超商', '飯', '麵', '麵包', '飲料', '停車費', '加油', '房貸', '健保費'],
+        tags: ['食', '衣', '住', '行', '育', '樂'],
         tagsActive: [],
         tagsFilter: [],
         newTagName: '',
@@ -26,9 +28,6 @@ const app = new Vue({
         isEditTag: false,
         isSettings: false,
         isReport: false,
-        year: thisYear,
-        month: thisMonth,
-        oldCosts: [],
         isUpdateReport: false,
         reportData: [],
         reportTags: [],
@@ -37,58 +36,51 @@ const app = new Vue({
     },
     computed: {
         totalMonth: function() {
-            const { costsMonth } = this;
-            return costsMonth.reduce((a, b) => a + parseInt(b.price, 10), 0);
+            const { costsMonth } = this
+            if (!costsMonth) return 0
+            return costsMonth.reduce((sum, cost) => sum + (parseInt(cost.price, 10) || 0), 0)
         },
         tagsTotal: function() {
-            const { costsMonth } = this;
-            let allTags = [];
-            if (costsMonth) costsMonth.map(cost => cost.tags.map(tag => allTags.push(tag)));
-            allTags = Array.from(new Set(allTags));
-            let tagsTotal = [];
-            allTags.map(tag => {
-                const sameTagCosts = costsMonth.filter(cost => cost.tags.includes(tag));
-                const total = sameTagCosts.reduce((a ,b) => a + parseInt(b.price), 0);
-                tagsTotal.push({
-                    name: tag,
-                    total, 
-                });
-            });
-            return tagsTotal;
+            const { costsMonth } = this
+            if (!costsMonth) return []
+            const tagTotals = costsMonth.reduce((acc, cost) => {
+                cost.tags.forEach(tag => acc[tag] = (acc[tag] || 0) + parseInt(cost.price, 10))
+                return acc
+            }, {})
+            return Object.entries(tagTotals).map(([name, total]) => ({ name, total }))
         },
         costsList: function() {
             const { costsMonth, tagsFilter } = this
-            let newCostsMonth = JSON.parse(JSON.stringify(costsMonth))
-            if (tagsFilter.length) {
-                newCostsMonth = newCostsMonth.filter(cost => cost.tags.some(tag => tagsFilter.includes(tag)))
-            }
-            let target = []
-            newCostsMonth.map(cost => {
+            const newCostsMonth = JSON.parse(JSON.stringify(costsMonth))
+            const filteredCosts = tagsFilter.length
+                ? newCostsMonth.filter(cost => cost.tags.some(tag => tagsFilter.includes(tag)))
+                : newCostsMonth
+            const result = filteredCosts.reduce((acc, cost) => {
                 const { id, y, m, d, name, price, tags } = cost
                 const daysOfWeek = ['日', '一', '二', '三', '四', '五', '六']
                 const date = new Date(`${y}-${m}-${d}`)
                 const day = daysOfWeek[date.getDay()]
-                const index = target.findIndex(item => item.d === d)
+                const index = acc.findIndex(item => item.d === d)
+                const costEntry = { id, name, price: parseInt(price, 10), tags, y, m, d }
                 if (index === -1) {
-                    target.push({
+                    acc.push({
                         d,
                         day,
-                        list: [{ id, name, price, tags, y, m, d }],
-                    })
+                        list: [costEntry],
+                        total: costEntry.price
+                    });
                 } else {
-                    target[index].list.push({ id, name, price, tags, y, m, d })
+                    acc[index].list.push(costEntry)
+                    acc[index].total += costEntry.price
                 }
-            })
-            target.map(item => {
-                const dayTotal = item.list.reduce((a, b) => a + parseInt(b.price), 0)
-                item.total = dayTotal
-            })
-            target.sort((a,b) => a.d.localeCompare(b.d))
-            return target
+                return acc
+            }, [])
+            result.sort((a, b) => a.d.localeCompare(b.d))
+            return result
         },
         reportSort: function() {
-            const { reportData } = this;
-            return reportData.sort((a, b) => b.price - a.price);
+            const { reportData } = this
+            return reportData.sort((a, b) => b.price - a.price)
         }
     },
     mounted: function() {
@@ -103,6 +95,7 @@ const app = new Vue({
                 ui.start('#firebaseui-auth-container', uiConfig);
             }
         });
+        console.log('start')
         this.a2hs();
     },
     methods: {

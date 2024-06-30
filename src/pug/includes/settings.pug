@@ -12,7 +12,7 @@
                 a(href="./terms.html", target="_blank")
                     i.material-icons list_alt
                     span 服務條款
-            li
+            li(v-if="uid")
                 a(href="#" @click.prevent="handleReport")
                     i.material-icons analytics
                     span 年報表

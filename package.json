@@ -1,7 +1,7 @@
 {
     "name": "mooney",
     "version": "1.0.0",
-    "description": "",
+    "description": "mooney 讓您輕鬆管理每日收支，追蹤財務狀況，幫助您達成財務目標。簡單易用的介面，極速絲滑的體驗，是您理財的好幫手。",
     "main": "index.js",
     "author": "Chia Yi Lai",
     "license": "ISC",
