@@ -86,62 +86,39 @@ const app = new Vue({
     mounted: function() {
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
-                this.uid = user.uid;
-                this.email = user.email;
-                this.displayName = user.displayName;
-                this.getData();
-                this.getCostsMonth();
+                this.uid = user.uid
+                this.email = user.email
+                this.displayName = user.displayName
+                this.getData()
+                this.getCostsMonth()
             } else {
-                ui.start('#firebaseui-auth-container', uiConfig);
+                ui.start('#firebaseui-auth-container', uiConfig)
             }
-        });
-        console.log('start')
-        this.a2hs();
+        })
+        this.a2hs()
     },
     methods: {
         getCostsMonth: function() {
-            const { uid, year, month } = this;
-            let result = [];
-            let query = db.collection('costs');
-            query = query.where('userID', '==', uid);
-            query = query.where('y', '==', year);
-            query = query.where('m', '==', month);
-            query.get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        result.push({ id: doc.id, ...doc.data() });
-                    });
-                    this.costsMonth = result;
+            const { uid, year, month } = this
+            db.collection('costs').where('userID', '==', uid).where('y', '==', year).where('m', '==', month).get()
+                .then(querySnapshot => {
+                    this.costsMonth = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                 })
-                .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                });
-        },
-        getCosts: function() {
-            const { uid } = this;
-            let result = [];
-            db.collection('costs').where('userID', '==', uid).get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        result.push({ id: doc.id, ...doc.data() });
-                    });
-                    this.costs = result;
+                .catch(error => {
+                    console.log("Error getting documents: ", error)
                 })
-                .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                });
         },
         getData: function() {
-            const { uid } = this;
+            const { uid } = this
             db.collection('users').doc(uid).get().then(doc => {
                 if (doc.exists) {
-                    const { tags, } = doc.data();
-                    this.user = doc.data();
-                    if (tags.length) this.tags = tags;
+                    const { tags, } = doc.data()
+                    this.user = doc.data()
+                    if (tags.length) this.tags = tags
                 } else {
-                    db.collection('users').doc(uid).set({ tags: [], });
+                    db.collection('users').doc(uid).set({ tags: [] })
                 }
-            });
+            })
         },
         a2hs: function() {
             if ('serviceWorker' in navigator) {
@@ -157,14 +134,14 @@ const app = new Vue({
         },
         editCost: function(cost) {
             if (cost.id) {
-                this.isEditCost = true;
-                cost.date = `${cost.y}-${cost.m}-${cost.d}`;
-                this.costActive = cost;
-                this.tagsActive = cost.tags;
+                this.isEditCost = true
+                cost.date = `${cost.y}-${cost.m}-${cost.d}`
+                this.costActive = cost
+                this.tagsActive = cost.tags
             } else {
-                this.isEditCost = !this.isEditCost;
-                const data = { date: dateString(), name: '' };
-                this.costActive = data;
+                this.isEditCost = !this.isEditCost
+                const data = { date: dateString(), name: '' }
+                this.costActive = data
             }
         },
         updateCost: function() {
