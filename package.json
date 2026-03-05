@@ -4,13 +4,5 @@
     "description": "mooney 讓您輕鬆管理每日收支，追蹤財務狀況，幫助您達成財務目標。簡單易用的介面，極速絲滑的體驗，是您理財的好幫手。",
     "main": "index.js",
     "author": "Chia Yi Lai",
-    "license": "ISC",
-    "dependencies": {
-        "sass": "^1.52.2",
-        "pug-cli": "^1.0.0-alpha6"
-    },
-    "scripts": {
-        "pug": "pug -w ./src/pug/*.pug -o ./",
-        "sass": "sass --watch --update --no-source-map --style=compressed ./src/css/main.sass:./dist/css/main.css"
-    }
+    "license": "ISC"
 }
