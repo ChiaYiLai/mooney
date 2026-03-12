@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Varela+Round&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Varela Round";
+  --default-transition-duration: 400ms;
+}
+
+input {
+  @apply bg-white border border-stone-200 px-6 py-3 outline-0 transition rounded-full text-sm hover:border-stone-400;
+}
+
+hr {
+  @apply w-full border-t border-stone-200 my-4;
+}
+.list-dates {
+  @apply space-y-5;
+  > li > label {
+    @apply text-xs text-stone-500 flex gap-1 mb-2 ml-3;
+    strong {
+      @apply ml-2;
+    }
+  }
+}
+
+.list-tags-cost {
+  @apply flex flex-wrap justify-center gap-2 mb-6 text-xs;
+  > li {
+    @apply bg-mauve-50 border border-mauve-200 hover:bg-mauve-100 text-mauve-500 px-3 pt-3 pb-2 text-center rounded-sm cursor-pointer transition;
+    &.active {
+      @apply bg-mauve-300 border-mauve-400 text-mauve-600;
+    }
+    b {
+      @apply font-normal block;
+    }
+  }
+}
+
+.list-costs {
+  @apply flex flex-wrap gap-2;
+  li {
+    @apply px-4 py-2 text-xs text-sky-500 bg-sky-50 border border-sky-200 hover:bg-sky-100 flex gap-1 rounded-full leading-none cursor-pointer transition;
+    &.sm {
+      @apply border-sky-400 text-sky-600;
+    }
+    &.md {
+      @apply border-sky-600 text-sky-700;
+    }
+    &.lg {
+      @apply bg-sky-600 border-sky-800 text-white;
+    }
+  }
+}
+
+.list-tags {
+  @apply flex flex-wrap gap-2;
+  li {
+    @apply border border-stone-200 px-4 py-2 text-xs text-stone-600 rounded-full transition leading-none;
+    &.active {
+      @apply bg-sky-50 border-sky-500 text-sky-500;
+    }
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-from .modal-content,
+.fade-leave-to .modal-content {
+  transform: translateY(20px);
+}
+
+.fade-enter-active .modal-content,
+.fade-leave-active .modal-content {
+  transition: transform 0.4s ease;
+}
