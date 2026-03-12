@@ -49,6 +49,22 @@ const submit = async () => {
   costsStore.isModalCost = false;
 };
 
+const showSuggestions = ref(false);
+
+const filteredNames = computed(() =>
+  names.value.filter((n) => n.includes(form.value.name)),
+);
+
+const selectName = (name: string) => {
+  form.value.name = name;
+  showSuggestions.value = false;
+  priceInput.value?.focus();
+};
+
+const hideSuggestions = () => {
+  window.setTimeout(() => (showSuggestions.value = false), 150);
+};
+
 watch(isModalCost, (val) => {
   if (val) {
     if (activeCost.value) {
@@ -71,18 +87,30 @@ watch(isModalCost, (val) => {
     :modelValue="isModalCost"
     @update:modelValue="costsStore.closeModalCost()"
   >
-    <input v-model="form.date" type="date" class="w-full mb-4" />
-    <input
-      v-model="form.name"
-      placeholder="品項"
-      class="w-full mb-4"
-      ref="nameInput"
-      list="names-list"
-      @change="priceInput?.focus()"
-    />
-    <datalist id="names-list">
-      <option v-for="name in names" :key="name" :value="name" />
-    </datalist>
+    <input v-model="form.date" type="date" class="w-full mb-4 min-w-0" />
+    <div class="relative">
+      <input
+        v-model="form.name"
+        placeholder="品項"
+        class="w-full mb-4"
+        ref="nameInput"
+        @focus="showSuggestions = true"
+        @blur="hideSuggestions"
+      />
+      <ul
+        v-if="showSuggestions && filteredNames.length"
+        class="absolute z-10 w-full bg-white border border-stone-300 rounded-lg shadow-lg max-h-48 overflow-y-auto flex flex-wrap"
+      >
+        <li
+          v-for="name in filteredNames"
+          :key="name"
+          class="px-6 py-3 cursor-pointer hover:bg-stone-100 text-stone-500 text-sm"
+          @click="selectName(name)"
+        >
+          {{ name }}
+        </li>
+      </ul>
+    </div>
     <input
       v-model.number="form.price"
       type="number"
