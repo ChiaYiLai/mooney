@@ -87,13 +87,18 @@ watch(isModalCost, (val) => {
     :modelValue="isModalCost"
     @update:modelValue="costsStore.closeModalCost()"
   >
-    <input v-model="form.date" type="date" class="w-full mb-4 min-w-0" />
+    <input
+      v-model="form.date"
+      type="date"
+      class="w-full mb-4 min-w-0 max-w-full"
+    />
     <div class="relative">
       <input
         v-model="form.name"
         placeholder="品項"
         class="w-full mb-4"
         ref="nameInput"
+        autocomplete="off"
         @focus="showSuggestions = true"
         @blur="hideSuggestions"
       />
@@ -117,6 +122,7 @@ watch(isModalCost, (val) => {
       placeholder="價格"
       class="w-full mb-4"
       ref="priceInput"
+      autocomplete="off"
     />
 
     <ul class="list-tags mb-4">
