@@ -9,7 +9,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import type { Cost } from "../types/index";
+import type { Cost, CostItem } from "../types/index";
 import dayjs from "dayjs";
 const toast = useToast();
 
@@ -20,7 +20,7 @@ const isModalCost = ref(false);
 
 export const useCostsStore = defineStore("costs", () => {
   const costs = ref<Cost[]>([]);
-  const activeCost = ref<Cost | null>(null);
+  const activeCost = ref<CostItem | null>(null);
   let changeMonthTimer: ReturnType<typeof setTimeout>;
   const authStore = useAuthStore();
 
@@ -33,8 +33,8 @@ export const useCostsStore = defineStore("costs", () => {
     );
     const snapshot = await getDocs(q);
     costs.value = snapshot.docs.map((doc) => ({
-      id: doc.id,
       ...(doc.data() as Cost),
+      id: doc.id,
     }));
   };
 
@@ -48,7 +48,7 @@ export const useCostsStore = defineStore("costs", () => {
     }, 300);
   };
 
-  const setActiveCost = (cost: Cost | null) => {
+  const setActiveCost = (cost: CostItem | null) => {
     activeCost.value = cost ? { ...cost } : null;
     isModalCost.value = true;
   };

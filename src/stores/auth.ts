@@ -7,9 +7,10 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+import type { User } from "firebase/auth";
 
 export const useAuthStore = defineStore("auth", () => {
-  const user = ref(null);
+  const user = ref<User | null>(null);
 
   const init = () => {
     onAuthStateChanged(auth, (u) => {

@@ -3,12 +3,13 @@ const costsStore = useCostsStore();
 const userStore = useUserStore();
 const tagsCost = computed(() => {
   if (!costsStore.costs) return [];
-  const tagTotals = costsStore.costs.reduce((acc, cost) => {
-    cost.tags.forEach(
-      (tag) => (acc[tag] = (acc[tag] || 0) + parseInt(cost.price, 10)),
-    );
-    return acc;
-  }, {});
+  const tagTotals = costsStore.costs.reduce<Record<string, number>>(
+    (acc, cost) => {
+      cost.tags.forEach((tag) => (acc[tag] = (acc[tag] || 0) + cost.price));
+      return acc;
+    },
+    {},
+  );
   return Object.entries(tagTotals).map(([name, total]) => ({ name, total }));
 });
 </script>

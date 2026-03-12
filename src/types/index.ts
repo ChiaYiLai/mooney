@@ -1,6 +1,5 @@
-// src/types/index.ts
 export interface Cost {
-  id?: string;
+  id: string;
   y: string;
   m: string;
   d: string;
@@ -9,3 +8,6 @@ export interface Cost {
   tags: string[];
   userID: string;
 }
+
+export type CostForm = Omit<Cost, "id">;
+export type CostItem = Omit<Cost, "userID">;

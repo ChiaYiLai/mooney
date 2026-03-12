@@ -11,24 +11,18 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    '(1)': typeof import('./src/components/AppToast (1).vue')['default']
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
     AppToast: typeof import('./src/components/AppToast.vue')['default']
     Btn: typeof import('./src/components/Btn.vue')['default']
-    BtnIcon: typeof import('./src/components/BtnIcon.vue')['default']
-    copy: typeof import('./src/components/NamesManager copy.vue')['default']
     CostForm: typeof import('./src/components/CostForm.vue')['default']
     Costs: typeof import('./src/components/Costs.vue')['default']
     DateCurrent: typeof import('./src/components/DateCurrent.vue')['default']
-    FormCost: typeof import('./src/components/FormCost.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
-    Menu: typeof import('./src/components/Menu.vue')['default']
     Modal: typeof import('./src/components/Modal.vue')['default']
     MonthTotal: typeof import('./src/components/MonthTotal.vue')['default']
     NamesManager: typeof import('./src/components/NamesManager.vue')['default']
     Or: typeof import('./src/components/Or.vue')['default']
-    Tags: typeof import('./src/components/Tags.vue')['default']
     TagsCost: typeof import('./src/components/TagsCost.vue')['default']
     TagsManager: typeof import('./src/components/TagsManager.vue')['default']
   }

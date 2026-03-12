@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useToast, type ToastType } from "@/composables/useToast";
-
 const { toasts, remove } = useToast();
 
 const styles: Record<ToastType, string> = {
