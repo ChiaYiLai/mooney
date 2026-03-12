@@ -6,6 +6,7 @@ import Components from "unplugin-vue-components/vite";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  base: "/mooney/",
   plugins: [
     vue(),
     tailwindcss(),
