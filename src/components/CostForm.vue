@@ -90,15 +90,14 @@ watch(isModalCost, (val) => {
     <input
       v-model="form.date"
       type="date"
-      class="w-full mb-4 min-w-0 max-w-full"
+      class="w-64 mb-4 min-w-0 max-w-full"
     />
     <div class="relative">
       <input
         v-model="form.name"
         placeholder="品項"
-        class="w-full mb-4"
+        class="w-64 mb-4"
         ref="nameInput"
-        autocomplete="off"
         @focus="showSuggestions = true"
         @blur="hideSuggestions"
       />
@@ -120,9 +119,8 @@ watch(isModalCost, (val) => {
       v-model.number="form.price"
       type="number"
       placeholder="價格"
-      class="w-full mb-4"
+      class="w-64 mb-4"
       ref="priceInput"
-      autocomplete="off"
     />
 
     <ul class="list-tags mb-4">

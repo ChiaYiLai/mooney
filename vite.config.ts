@@ -7,6 +7,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   base: "/mooney/",
+  server: {
+    host: true, // 或寫 '0.0.0.0'
+  },
   plugins: [
     vue(),
     tailwindcss(),

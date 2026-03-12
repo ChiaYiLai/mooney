@@ -6,7 +6,7 @@ const props = defineProps<{
 }>();
 
 const baseClass =
-  "cursor-pointer transition rounded-full text-sm whitespace-nowrap leading-none";
+  "cursor-pointer transition rounded-full whitespace-nowrap leading-none";
 
 const variantClass = computed(
   () =>
