@@ -77,7 +77,6 @@ watch(isModalCost, (val) => {
     } else {
       form.value = defaultForm();
     }
-    nextTick(() => nameInput.value?.focus());
   }
 });
 </script>
@@ -118,6 +117,7 @@ watch(isModalCost, (val) => {
     <input
       v-model.number="form.price"
       type="number"
+      inputmode="numeric"
       placeholder="價格"
       class="w-64 mb-4"
       ref="priceInput"
@@ -134,7 +134,7 @@ watch(isModalCost, (val) => {
       </li>
     </ul>
 
-    <Btn @click="submit" class="w-full">
+    <Btn @click="submit" class="w-full" :v="activeCost ? 'primary' : 'warning'">
       {{ activeCost ? "更新" : "新增" }}
     </Btn>
     <Or />

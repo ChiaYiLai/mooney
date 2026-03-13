@@ -6,17 +6,17 @@ const props = defineProps<{
 }>();
 
 const baseClass =
-  "cursor-pointer transition rounded-full whitespace-nowrap leading-none";
+  "cursor-pointer transition rounded-full whitespace-nowrap leading-none text-sm";
 
 const variantClass = computed(
   () =>
     ({
       primary: "bg-sky-400 hover:bg-sky-600 text-white",
-      warning: "bg-orange-400 hover:bg-orange-600 text-white",
+      warning: "bg-teal-400 hover:bg-teal-600 text-white",
       danger: "bg-red-400 hover:bg-red-600 text-white",
       light: "bg-stone-400 hover:bg-stone-600 text-white",
       none: "bg-transparent border-0",
-      addCost: "bg-linear-to-br from-orange-300 to-orange-500 text-white",
+      addCost: "bg-teal-400 text-white w-14 h-14",
     })[props.v ?? "primary"],
 );
 

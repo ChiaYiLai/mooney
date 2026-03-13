@@ -10,25 +10,27 @@ onMounted(() => {
 
 <template>
   <AppHeader />
-  <main v-if="authStore.user" class="p-4 flex-1">
-    <DateCurrent />
-    <MonthTotal />
-    <TagsCost />
-    <Costs />
-    <CostForm />
-    <NamesManager />
-    <TagsManager />
-    <Btn
-      size="icon"
-      v="addCost"
-      class="fixed right-6 bottom-6 z-1 shadow-lg border-2 border-white"
-      @click="costsStore.isModalCost = true"
-      v-if="!costsStore.isModalCost"
+  <main class="p-4 flex-1">
+    <template v-if="authStore.user">
+      <DateCurrent />
+      <MonthTotal />
+      <TagsCost />
+      <Costs />
+      <CostForm />
+      <NamesManager />
+      <TagsManager />
+      <Btn
+        size="icon"
+        v="addCost"
+        class="fixed left-1/2 -translate-x-1/2 bottom-12 z-1 shadow-lg border-2 border-white"
+        @click="costsStore.isModalCost = true"
+        v-if="!costsStore.isModalCost"
+      >
+        <span class="material-icons text-3xl!">add</span>
+      </Btn></template
     >
-      <span class="material-icons">add</span>
-    </Btn>
+    <Login v-else />
   </main>
-  <Login v-else />
   <AppFooter />
   <AppToast />
 </template>
