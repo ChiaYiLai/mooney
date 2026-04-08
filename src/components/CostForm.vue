@@ -8,7 +8,6 @@ const toast = useToast();
 
 const { tags, names } = storeToRefs(userStore);
 const { isModalCost, activeCost } = storeToRefs(costsStore);
-const nameInput = ref<HTMLInputElement | null>(null);
 const priceInput = ref<HTMLInputElement | null>(null);
 
 const defaultForm = () => ({
@@ -96,7 +95,6 @@ watch(isModalCost, (val) => {
         v-model="form.name"
         placeholder="品項"
         class="w-64 mb-4"
-        ref="nameInput"
         @focus="showSuggestions = true"
         @blur="hideSuggestions"
       />
